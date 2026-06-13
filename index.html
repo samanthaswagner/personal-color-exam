@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Color Exam — find your true palette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#191A1E;
+    --graphite-2:#212329;
+    --paper:#ECEAE4;        /* neutral test surface — kept desaturated so swatches read true */
+    --paper-ink:#23242a;
+    --paper-dim:#6f7178;
+    --line:rgba(236,234,228,.12);
+    --ink:#EDECE8;
+    --ink-dim:#9A9CA3;
+    --accent:#6E5BD8;       /* single ink-violet accent */
+    --accent-soft:#B3A8EA;
+    --warm:#D98A3D;
+    --cool:#3E78C8;
+    --ok:#52A57E;
+    --serif:'Instrument Serif',Georgia,serif;
+    --sans:'Inter',system-ui,sans-serif;
+    --mono:'Space Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--graphite);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.55}
+  .stage{max-width:760px;margin:0 auto;padding:40px 24px 72px;min-height:100vh;display:flex;flex-direction:column}
+  .screen{display:none;animation:fade .4s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen.on{animation:none}}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-dim);display:flex;align-items:center;gap:14px}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+
+  /* ---- intro ---- */
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(46px,11vw,86px);line-height:.92;margin:26px 0 0;letter-spacing:.01em}
+  h1 em{font-style:italic;color:var(--accent-soft)}
+  .lede{max-width:52ch;margin:22px 0 0;font-size:16.5px;color:#D6D5D1}
+  .lede b{font-weight:500;color:#fff}
+  .axes-pre{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0}
+  .axis-pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;border:1px solid var(--line);border-radius:99px;padding:7px 13px;color:var(--ink-dim)}
+
+  .gate{margin:30px 0 0;border:1px solid var(--line);border-radius:4px;padding:22px 24px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.04))}
+  .gate h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-soft);margin:0 0 14px}
+  .gate ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
+  .gate li{display:flex;gap:12px;font-size:14px;color:#CFCEC9;align-items:flex-start}
+  .gate li b{color:#fff;font-weight:500}
+  .tick{flex:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--accent);display:grid;place-items:center;margin-top:1px}
+  .tick::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+  .btn{font-family:var(--sans);font-weight:500;font-size:15px;border:none;border-radius:99px;padding:15px 30px;cursor:pointer;transition:transform .15s ease,background .15s ease;letter-spacing:.01em}
+  .btn-primary{background:var(--accent);color:#fff;margin-top:30px}
+  .btn-primary:hover{transform:translateY(-2px);background:#7d6be0}
+  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);padding:12px 22px}
+  .btn-ghost:hover{color:var(--ink);border-color:rgba(236,234,228,.3)}
+  .btn:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
+
+  /* ---- progress ---- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}
+  .pips{display:flex;gap:6px}
+  .pip{width:26px;height:4px;border-radius:99px;background:rgba(236,234,228,.16);transition:background .3s}
+  .pip.done{background:var(--accent)}
+  .pip.cur{background:var(--accent-soft)}
+  .qcount{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-dim)}
+
+  /* ---- question ---- */
+  .qaxis{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-soft);margin-bottom:14px}
+  .qprompt{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.06;margin:0 0 14px;letter-spacing:.01em}
+  .qhow{font-size:14.5px;color:var(--ink-dim);max-width:54ch;margin:0 0 28px}
+  .qhow b{color:#CFCEC9;font-weight:500}
+
+  .plates{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .plate{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:var(--paper);text-align:left;padding:0;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
+  .plate:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.4);border-color:rgba(236,234,228,.28)}
+  .plate:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
+  .plate.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+  .plate .swatch{height:128px;display:flex;align-items:flex-end;padding:12px}
+  .plate .splabel{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.78);color:#23242a;padding:3px 8px;border-radius:99px}
+  .plate .body{padding:14px 16px 16px}
+  .plate .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+  .plate .desc{color:var(--paper-ink);font-size:15px;font-weight:400;margin-top:5px}
+  /* split swatch helper */
+  .duo{display:flex;height:128px}
+  .duo span{flex:1}
+
+  .opts3{display:grid;gap:12px}
+  .opt-row{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:6px;padding:16px 18px;cursor:pointer;background:rgba(255,255,255,.02);transition:border-color .15s,background .15s,transform .15s}
+  .opt-row:hover{transform:translateY(-2px);border-color:rgba(236,234,228,.3);background:rgba(255,255,255,.04)}
+  .opt-row.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .opt-row:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
+  .opt-dot{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line)}
+  .opt-row .otxt{font-size:15.5px;color:#DEDDD9}
+  .opt-row .osub{font-size:12.5px;color:var(--ink-dim);margin-top:2px}
+
+  .varies{margin-top:18px;display:flex;justify-content:center}
+  .varies button{background:transparent;border:1px dashed var(--line);color:var(--ink-dim);font-family:var(--mono);font-size:11px;letter-spacing:.1em;border-radius:99px;padding:10px 18px;cursor:pointer}
+  .varies button:hover{color:var(--ink);border-color:rgba(236,234,228,.34)}
+  .varies button.sel{color:var(--accent-soft);border-color:var(--accent);border-style:solid}
+
+  .navrow{display:flex;justify-content:space-between;align-items:center;margin-top:30px}
+
+  /* ---- result ---- */
+  .rhead .eyebrow{margin-bottom:0}
+  .verdict{font-family:var(--serif);font-size:clamp(30px,6vw,52px);line-height:1.04;margin:20px 0 8px}
+  .verdict em{font-style:italic;color:var(--accent-soft)}
+  .rsum{font-size:15.5px;color:#D2D1CD;max-width:58ch;margin:0 0 8px}
+
+  .meters{margin:34px 0 0;display:grid;gap:22px}
+  .meter h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 10px;color:var(--ink-dim);display:flex;justify-content:space-between}
+  .meter h4 .flag{color:var(--accent-soft)}
+  .scale{position:relative;height:10px;border-radius:99px;overflow:hidden}
+  .scale .fill{position:absolute;inset:0}
+  .needle{position:absolute;top:-5px;width:3px;height:20px;border-radius:99px;background:var(--ink);box-shadow:0 0 0 3px var(--graphite)}
+  .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-dim);margin-top:7px;font-family:var(--mono);letter-spacing:.04em}
+  .conf{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);margin-top:6px}
+
+  .translate{margin-top:38px;border-top:1px solid var(--line);padding-top:26px}
+  .translate h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-soft);margin:0 0 12px}
+  .translate p{font-size:14.5px;color:#CFCEC9;max-width:60ch;margin:0 0 10px}
+  .translate .nofit{font-size:13.5px;color:var(--ink-dim);font-style:italic}
+
+  .ractions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+  .copynote{font-family:var(--mono);font-size:11px;color:var(--ok);margin-top:10px;display:none}
+
+  .footnote{margin-top:44px;font-family:var(--mono);font-size:11px;color:var(--ink-dim);line-height:1.7}
+
+  @media (max-width:560px){
+    .plates{grid-template-columns:1fr}
+    h1{font-size:clamp(44px,15vw,64px)}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen on" id="s-intro">
+    <div class="eyebrow">A color exam · not a personality quiz</div>
+    <h1>Read your color<br>like an <em>eye chart</em>.</h1>
+    <p class="lede">Forget seasons for a moment. Your coloring is really <b>four independent dials</b> — undertone, depth, clarity, and contrast. This exam measures each one directly, the way an optician asks <i>"better, or worse?"</i> — then translates the result into a season only at the very end, where it belongs.</p>
+    <div class="axes-pre">
+      <span class="axis-pill">01 · Undertone</span>
+      <span class="axis-pill">02 · Depth</span>
+      <span class="axis-pill">03 · Clarity</span>
+      <span class="axis-pill">04 · Contrast + dial</span>
+    </div>
+
+    <div class="gate">
+      <h3>Set the conditions first — accuracy lives here</h3>
+      <ul>
+        <li><span class="tick"></span><span><b>Daylight only.</b> Face a window. No indoor bulbs — they fake-warm or fake-cool everything.</span></li>
+        <li><span class="tick"></span><span><b>Bare face, hair back.</b> Makeup and hair color both lie to this test.</span></li>
+        <li><span class="tick"></span><span><b>Have two real items ready</b> if you can: gold vs. silver, white vs. cream cloth, and a peach vs. a cool-rose fabric. Hold them under your chin.</span></li>
+        <li><span class="tick"></span><span><b>Judge your skin, not the color.</b> The winner makes redness recede and under-eye shadows lift. The loser leaves you grey, sallow, or blotchy.</span></li>
+      </ul>
+    </div>
+    <button class="btn btn-primary" onclick="start()">Begin the exam →</button>
+  </section>
+
+  <!-- ============ QUESTION ============ -->
+  <section class="screen" id="s-quiz">
+    <div class="topbar">
+      <div class="pips" id="pips"></div>
+      <div class="qcount" id="qcount"></div>
+    </div>
+    <div id="qbody"></div>
+    <div class="navrow">
+      <button class="btn btn-ghost" id="backBtn" onclick="back()">← Back</button>
+      <span class="qcount" id="hint">Pick the kinder option</span>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="screen" id="s-result">
+    <div class="rhead">
+      <div class="eyebrow">Your color, in four dials</div>
+      <h2 class="verdict" id="verdict"></h2>
+      <p class="rsum" id="rsum"></p>
+    </div>
+    <div class="meters" id="meters"></div>
+
+    <div class="translate">
+      <h3>Translated into the season system</h3>
+      <p id="seasonText"></p>
+      <p class="nofit" id="nofitText"></p>
+    </div>
+
+    <div class="ractions">
+      <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">Copy my result</button>
+      <button class="btn btn-ghost" onclick="restart()">Start over</button>
+    </div>
+    <div class="copynote" id="copynote">Copied — paste it into a message, or into Claude / ChatGPT for styling.</div>
+
+    <p class="footnote">
+      This is a heuristic, not a measurement instrument — seasonal color analysis has little formal validation, and screens render color imperfectly. The load-bearing evidence is your skin's reaction to real fabric in daylight. Treat the season as a translation, not a verdict. · A confidence flag means your answers on that dial were close or shifting — worth re-testing with real cloth.
+    </p>
+  </section>
+
+</div>
+
+<script>
+/* ---------------- question bank ----------------
+   axis: undertone | depth | clarity | contrast | stability
+   each option carries a signed weight toward that axis.
+   undertone: - = cool, + = warm
+   depth:     - = light, + = deep
+   clarity:   - = clear/bright, + = soft/muted
+   contrast:  - = low, + = high
+*/
+const Q = [
+  { axis:'undertone', w:1,
+    prompt:'Gold, or silver?',
+    how:'Hold real gold then silver under your chin. <b>Which makes your skin look lit and clear</b> — and which leaves it grey or separate from the metal?',
+    type:'plates',
+    a:{sw:'linear-gradient(135deg,#E7C36B,#B8902F)', label:'Gold', tag:'A', desc:'Gold wins — skin looks warmer, alive', val:+1},
+    b:{sw:'linear-gradient(135deg,#D8DDE2,#9AA1AA)', label:'Silver', tag:'B', desc:'Silver wins — skin looks clean, cool', val:-1},
+    varies:true },
+
+  { axis:'undertone', w:1.5,
+    prompt:'Bright white, or soft cream?',
+    how:'Drape pure white, then ivory/cream. <b>One looks clean; one looks sallow or muddy.</b> Which is which?',
+    type:'plates',
+    a:{sw:'linear-gradient(135deg,#F6EFD9,#EADFBE)', label:'Cream', tag:'A', desc:'Cream looks fresh, white looks harsh', val:+1},
+    b:{sw:'linear-gradient(135deg,#FFFFFF,#F2F4F6)', label:'Pure white', tag:'B', desc:'White looks clean, cream looks dingy', val:-1} },
+
+  { axis:'undertone', w:2,
+    prompt:'Warm peach, or cool rose?',
+    how:'The decisive one. Drape a peach/coral, then a cool rose/pink. <b>Which calms your skin, and which makes any redness flare?</b>',
+    type:'plates',
+    a:{sw:'linear-gradient(135deg,#F4A977,#EC7E54)', label:'Peach / coral', tag:'A', desc:'Peach calms me, rose looks flat', val:+1},
+    b:{sw:'linear-gradient(135deg,#E6A6BC,#D27E9C)', label:'Cool rose', tag:'B', desc:'Rose calms me, peach reddens me', val:-1} },
+
+  { axis:'undertone', w:0.5,
+    prompt:'Your wrist veins, in daylight?',
+    how:'A tiebreaker, not gospel — many people read in-between, which is itself a clue you sit neutral.',
+    type:'opts',
+    options:[
+      {dot:'#7FA05A', txt:'Distinctly green', sub:'leans warm', val:+1},
+      {dot:'#6E7FC0', txt:'Distinctly blue / purple', sub:'leans cool', val:-1},
+      {dot:'#9098A0', txt:'Honestly can\'t tell', sub:'neutral signal', val:0}
+    ] },
+
+  { axis:'depth', w:2,
+    prompt:'Bare-faced — pale shade, or deep shade?',
+    how:'Drape a very light pastel, then a deep dark shade. <b>Which sits in harmony, and which overwhelms your face?</b>',
+    type:'plates',
+    a:{sw:'linear-gradient(135deg,#E9E4F2,#CFC6E4)', label:'Pale', tag:'A', desc:'The pale one harmonizes; dark engulfs me', val:-1},
+    b:{sw:'linear-gradient(135deg,#2A2E40,#15182a)', label:'Deep', tag:'B', desc:'The deep one anchors me; pale washes me out', val:+1} },
+
+  { axis:'depth', w:1.5,
+    prompt:'Your natural coloring overall?',
+    how:'Hair, brows and skin together, no makeup. Where does the whole picture land?',
+    type:'opts',
+    options:[
+      {dot:'#E6DCC6', txt:'Light — fair skin, light hair/brows', sub:'low natural depth', val:-2},
+      {dot:'#A98E6B', txt:'Medium — some natural depth', sub:'mid', val:0},
+      {dot:'#42352a', txt:'Deep — dark hair and/or rich skin', sub:'high natural depth', val:+2}
+    ] },
+
+  { axis:'clarity', w:2,
+    prompt:'Clean and bright, or the same shade muted?',
+    how:'Compare a clear, clean color against a greyed-down version of it. <b>One lights your face; one flattens it.</b>',
+    type:'plates',
+    a:{sw:'linear-gradient(135deg,#1FA6C2,#1577C0)', label:'Clear / bright', tag:'A', desc:'The clean version lifts me', val:-1},
+    b:{sw:'linear-gradient(135deg,#7E97A0,#5E7178)', label:'Muted / greyed', tag:'B', desc:'The softer, hazier version suits me better', val:+1} },
+
+  { axis:'clarity', w:1.5,
+    prompt:'Greyed earthy neutrals — friend or foe?',
+    how:'Think olive, taupe, dusty grey near your face. Do they flatter you, or drain you?',
+    type:'opts',
+    options:[
+      {dot:'#8C8A6E', txt:'They flatter me', sub:'you lean soft / muted', val:+1.5},
+      {dot:'#9A9CA3', txt:'They drain me — I need clean color', sub:'you lean clear', val:-1.5},
+      {dot:'#B7B4Ac', txt:'Neutral / no effect', sub:'mid', val:0}
+    ] },
+
+  { axis:'contrast', w:2,
+    prompt:'Bare-faced: stark contrast, or soft blend?',
+    how:'Picture a sharp black-and-white pairing versus a gentle tonal blend, with <b>no makeup on</b>. Which suits the bare face?',
+    type:'plates',
+    a:{sw:'linear-gradient(90deg,#15161b 0 50%,#F4F5F7 50% 100%)', label:'High contrast', tag:'A', desc:'Sharp dark-vs-light suits me bare-faced', val:+1},
+    b:{sw:'linear-gradient(135deg,#C9CBD8,#9FA6BE)', label:'Soft / tonal', tag:'B', desc:'Close, blended tones suit me better', val:-1} },
+
+  { axis:'stability', w:1,
+    prompt:'Does that change with full makeup?',
+    how:'The dial. When you add defined brows and a bold lip, can you suddenly carry far more contrast and drama than your bare face wants?',
+    type:'opts',
+    options:[
+      {dot:'#6E5BD8', txt:'Yes — makeup lets me go much bolder', sub:'adjustable contrast (a dial)', val:1},
+      {dot:'#9A9CA3', txt:'No — about the same either way', sub:'fixed contrast', val:0}
+    ] }
+];
+
+/* ---------------- state ---------------- */
+let idx=0;
+const ans=new Array(Q.length).fill(null);
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo({top:0,behavior:'instant'});}
+
+function start(){idx=0;renderPips();renderQ();show('s-quiz');}
+function restart(){ans.fill(null);start();}
+
+function renderPips(){
+  const p=$('pips');p.innerHTML='';
+  Q.forEach((_,i)=>{const d=document.createElement('div');d.className='pip'+(i<idx?' done':i===idx?' cur':'');p.appendChild(d);});
+}
+
+function renderQ(){
+  renderPips();
+  $('qcount').textContent=`Q ${idx+1} / ${Q.length}`;
+  $('backBtn').style.visibility=idx===0?'hidden':'visible';
+  const q=Q[idx];
+  const axisName={undertone:'01 · Undertone',depth:'02 · Depth',clarity:'03 · Clarity',contrast:'04 · Contrast',stability:'04 · Contrast — the dial'}[q.axis];
+  let html=`<div class="qaxis">${axisName}</div><h2 class="qprompt">${q.prompt}</h2><p class="qhow">${q.how}</p>`;
+
+  if(q.type==='plates'){
+    html+=`<div class="plates">
+      ${plate(q.a,'a')}
+      ${plate(q.b,'b')}
+    </div>`;
+    if(q.varies){html+=`<div class="varies"><button id="vbtn" onclick="pick('v')">No difference — they look the same on me</button></div>`;}
+  } else {
+    html+=`<div class="opts3">`;
+    q.options.forEach((o,i)=>{
+      html+=`<div class="opt-row" role="button" tabindex="0" data-i="${i}" onclick="pickOpt(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickOpt(${i})}">
+        <span class="opt-dot" style="background:${o.dot}"></span>
+        <span><div class="otxt">${o.txt}</div><div class="osub">${o.sub}</div></span>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  $('qbody').innerHTML=html;
+  reflectSelection();
+}
+
+function plate(o,key){
+  return `<button class="plate" data-k="${key}" onclick="pick('${key}')">
+    <div class="swatch" style="background:${o.sw}"><span class="splabel">${o.label}</span></div>
+    <div class="body"><div class="tag">${o.tag}</div><div class="desc">${o.desc}</div></div>
+  </button>`;
+}
+
+function reflectSelection(){
+  const cur=ans[idx];
+  document.querySelectorAll('#qbody .plate').forEach(p=>p.classList.toggle('sel',cur&&cur.key===p.dataset.k));
+  document.querySelectorAll('#qbody .opt-row').forEach(r=>r.classList.toggle('sel',cur&&cur.optI===+r.dataset.i));
+  const vb=$('vbtn'); if(vb) vb.classList.toggle('sel',cur&&cur.key==='v');
+}
+
+function pick(key){
+  const q=Q[idx];
+  let val=0,decisive=true;
+  if(key==='a')val=q.a.val; else if(key==='b')val=q.b.val; else {val=0;decisive=false;}
+  ans[idx]={axis:q.axis,w:q.w,val:val*q.w,decisive,key};
+  reflectSelection();
+  setTimeout(next,230);
+}
+function pickOpt(i){
+  const q=Q[idx],o=q.options[i];
+  const decisive=o.val!==0;
+  ans[idx]={axis:q.axis,w:q.w,val:o.val*q.w,decisive,optI:i,raw:o.val};
+  reflectSelection();
+  setTimeout(next,230);
+}
+
+function next(){ if(idx<Q.length-1){idx++;renderQ();} else finish(); }
+function back(){ if(idx>0){idx--;renderQ();} }
+
+/* ---------------- scoring ---------------- */
+function finish(){
+  const acc={undertone:0,depth:0,clarity:0,contrast:0};
+  const wsum={undertone:0,depth:0,clarity:0,contrast:0};
+  const decis={undertone:[0,0],depth:[0,0],clarity:[0,0],contrast:[0,0]};
+  let dial=false;
+  ans.forEach((a,i)=>{
+    if(!a)return;
+    if(a.axis==='stability'){ if(a.raw===1||(Q[i].options&&a.optI===0)) dial=true; return; }
+    acc[a.axis]+=a.val;
+    wsum[a.axis]+=Q[i].w;
+    decis[a.axis][1]++; if(a.decisive)decis[a.axis][0]++;
+  });
+  // normalize each axis to -100..100
+  const norm={};
+  for(const k in acc){ norm[k]= wsum[k]? Math.max(-100,Math.min(100, Math.round((acc[k]/wsum[k])*100))) : 0; }
+  const conf={};
+  for(const k in decis){ conf[k]= decis[k][1]? Math.round(100*decis[k][0]/decis[k][1]) : 0; }
+
+  renderResult(norm,conf,dial);
+  show('s-result');
+}
+
+function label(axis,v){
+  const strong=Math.abs(v)>=55, mild=Math.abs(v)>=20;
+  const word=(neg,pos,neu)=> v<0 ? (strong?'Strongly ':mild?'':'Leans ')+neg : v>0 ? (strong?'Strongly ':mild?'':'Leans ')+pos : neu;
+  if(axis==='undertone')return word('cool','warm','Neutral');
+  if(axis==='depth')return word('light','deep','Medium');
+  if(axis==='clarity')return word('clear','soft','Balanced');
+  if(axis==='contrast')return word('low-contrast','high-contrast','Medium');
+}
+
+function renderResult(n,c,dial){
+  // headline profile sentence
+  const temp = n.undertone<0?'cool':n.undertone>0?'warm':'neutral';
+  const clar = n.clarity<0?'clear':n.clarity>0?'soft':'balanced';
+  const depthW = n.depth<0?'light':n.depth>0?'deep':'medium';
+  const contrastW = dial ? 'adjustable contrast' : (n.contrast>0?'high contrast':n.contrast<0?'low contrast':'medium contrast');
+  $('verdict').innerHTML=`<em>${cap(temp)}</em> &amp; <em>${clar}</em>,<br>${depthW} with ${contrastW}.`;
+  $('rsum').textContent=`Your two most stable dials are undertone (${temp}) and clarity (${clar}). ${dial?'Your contrast is a dial you set with makeup — which is why a single fixed season never quite fits.':'Your contrast reads fairly fixed.'}`;
+
+  const meterDefs=[
+    {axis:'undertone',l:'Cool',r:'Warm'},
+    {axis:'depth',l:'Light',r:'Deep'},
+    {axis:'clarity',l:'Clear',r:'Soft / muted'},
+    {axis:'contrast',l:'Low contrast',r:'High contrast'}
+  ];
+  const grad={
+    undertone:'linear-gradient(90deg,#3E78C8,#8a93a0,#D98A3D)',
+    depth:'linear-gradient(90deg,#E9E4F2,#7d7f96,#15182a)',
+    clarity:'linear-gradient(90deg,#1FA6C2,#7E97A0,#5E7178)',
+    contrast:'linear-gradient(90deg,#C9CBD8,#6E5BD8,#15161b)'
+  };
+  let m='';
+  meterDefs.forEach(d=>{
+    const v=n[d.axis], pos=(v+100)/2; // 0..100
+    const flag = (d.axis==='contrast'&&dial)?'<span class="flag">⟲ adjustable</span>': (c[d.axis]<60?'<span class="flag">⚑ low confidence</span>':'');
+    m+=`<div class="meter">
+      <h4><span>${cap(d.axis)} — ${label(d.axis,v)}</span>${flag}</h4>
+      <div class="scale"><div class="fill" style="background:${grad[d.axis]}"></div><div class="needle" style="left:calc(${pos}% - 1.5px)"></div></div>
+      <div class="ends"><span>${d.l}</span><span>${d.r}</span></div>
+      <div class="conf">confidence ${c[d.axis]}%${d.axis==='contrast'&&dial?' · contrast measured bare-faced; rises with makeup':''}</div>
+    </div>`;
+  });
+  $('meters').innerHTML=m;
+
+  // season translation
+  const {text,nofit,profile}=translate(n,dial,temp,clar,depthW);
+  $('seasonText').innerHTML=text;
+  $('nofitText').innerHTML=nofit;
+  window.__profile=profile;
+}
+
+function translate(n,dial,temp,clar,depthW){
+  const cool=n.undertone<0, warm=n.undertone>0;
+  const clear=n.clarity<0, soft=n.clarity>0;
+  const light=n.depth<0, deep=n.depth>0;
+  let nearest=[], why='';
+
+  if(cool&&clear&&light){
+    nearest = dial ? ['Bright / Cool Winter <span style="color:var(--ink-dim)">(full-makeup days)</span>','Light Summer minus the muted <span style="color:var(--ink-dim)">(natural days)</span>']
+                   : ['Light Summer','Bright Winter'];
+    why='Cool + clear is the spine of your palette. Your light, low-contrast features point toward <b>Summer</b>, but your love of clean, saturated color points toward <b>Winter</b> — the two seasons disagree only on the contrast axis, which for you is a dial.';
+  } else if(cool&&clear&&deep){
+    nearest=['Cool / True Winter','Bright Winter'];
+    why='Cool, clear and deep is the classic Winter signature — jewel tones, true reds, crisp contrast.';
+  } else if(cool&&soft){
+    nearest=['Light Summer','Soft Summer'];
+    why='Cool and muted is Summer territory — soft, hazy, blue-based tones over anything stark.';
+  } else if(warm&&clear&&light){
+    nearest=['Light Spring','Bright / Clear Spring'];
+    why='Warm and clear with light features is Spring — fresh, warm, clean color.';
+  } else if(warm&&soft){
+    nearest=['Soft Autumn','Warm Autumn'];
+    why='Warm and muted is Autumn — earthy, rich, golden tones.';
+  } else if(warm&&clear&&deep){
+    nearest=['True / Warm Autumn','Deep Autumn'];
+    why='Warm, clear and deep leans Deep/Warm Autumn.';
+  } else {
+    nearest=['You sit between seasons'];
+    why='Your dials land near the middle on undertone or clarity, so no single season dominates.';
+  }
+
+  const text = `${why}<br><br><b>Nearest label${nearest.length>1?'s':''}:</b> ${nearest.join(' · ')}`;
+  const nofit = dial
+    ? 'Where you escape the system: every season assumes your contrast is a fixed fact. Yours isn\'t — you build it with makeup — so treat the label as a setting, not an identity.'
+    : 'Where the system can still mislead: it bundles four dials into one word, so if any single dial above reads "low confidence," re-test it with real fabric before trusting the season.';
+
+  const profile = `MY COLOR PROFILE (axis-based)
+• Undertone: ${cap(temp)} (${n.undertone})
+• Depth: ${cap(depthW)} (${n.depth})
+• Clarity: ${clear?'Clear':soft?'Soft/muted':'Balanced'} (${n.clarity})
+• Contrast: ${dial?'Adjustable — a dial set by makeup (bold on full-makeup days, soft on bare days)':(n.contrast>0?'High':n.contrast<0?'Low':'Medium')} (${n.contrast})
+Nearest season(s): ${nearest.join(' / ').replace(/<[^>]+>/g,'')}
+Rule of thumb: ${temp} over its opposite; ${clear?'clear over muted':soft?'soft over stark':'balanced'}; match clothing contrast to makeup.`;
+  return {text,nofit,profile};
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function copyResult(){
+  const txt=window.__profile||'';
+  navigator.clipboard?.writeText(txt).then(()=>{
+    $('copynote').style.display='block';
+    setTimeout(()=>$('copynote').style.display='none',4000);
+  });
+}
+</script>
+</body>
+</html>
