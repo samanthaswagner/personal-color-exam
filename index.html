@@ -1,516 +1,647 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Color Exam — find your true palette</title>
-
-<!-- Link preview (Open Graph / Twitter) -->
-<meta property="og:title" content="The Color Exam — find your true palette">
-<meta property="og:description" content="Find your true palette by measuring four dials — undertone, depth, clarity, and contrast. A quick, skin-honest color exam.">
-<meta property="og:image" content="https://samanthaswagner.github.io/personal-color-exam/social-preview.png">
-<meta property="og:url" content="https://samanthaswagner.github.io/personal-color-exam/">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The Color Exam — find your true palette">
-<meta name="twitter:description" content="Find your true palette by measuring four dials — undertone, depth, clarity, and contrast. A quick, skin-honest color exam.">
-<meta name="twitter:image" content="https://samanthaswagner.github.io/personal-color-exam/social-preview.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Closet Coder // Theme Finder</title>
 <style>
+  /* ===== Poppins — bundled locally (subset Latin, woff), no network request ===== */
+  @font-face{font-family:"Poppins";font-style:normal;font-weight:500;font-display:swap;src:url(data:font/woff;base64,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) format("woff");}
+  @font-face{font-family:"Poppins";font-style:normal;font-weight:700;font-display:swap;src:url(data:font/woff;base64,d09GRgABAAAAACZcAAwAAAAAOUgABAEGAAAAAAAAAAAAAAAAAAAAAAAAAABHUE9TAAAmDAAAACAAAAAgRHZMdUdTVUIAACYsAAAALgAAADAfSCdrT1MvMgAAJIQAAABNAAAAYFqtgJdjbWFwAAAk1AAAAFgAAABsZXNjImdseWYAAAEcAAAfIgAAME4NGx6zaGVhZAAAIggAAAA2AAAANhpRJHFoaGVhAAAkZAAAACAAAAAkC/wCKmhtdHgAACJAAAACJAAAA0jngyCubG9jYQAAIGAAAAGmAAABpnI6ZuVtYXhwAAAgQAAAACAAAAAgAVQBJW5hbWUAACUsAAAAygAAAYIf9zbOcG9zdAAAJfgAAAATAAAAIP+4ADJ4nI16CXxTVbr4PSeloQVK2zRJ9zS5bZKmWdqkSZo2tKH7Xlq6L5S2lIatLaUgO1IKIpsPZASrIsomRnEGBhjUYUAcn9v7K+rojPN/Or5BRxlncURGhN6875x7k6bIzO8F7k363XO+853vfPt3Gcx0er9HOvwRI2JmMgwSsaJItTXTZjHLpFHBLFJE7Y0yOxwGvcOhxx9xSvTpuNKq0dpsWo2VYTCjxQVohSgJZosZRiJmNUq4zs5YMQNVwE2U9N/wIeOiGEbUh68xcYwCVhFbpKyYtdPLaqGXRUwvqZIVW/Bb8asfVR5WHodr/9n4vT9LOpx0HK713KvH44+jc1vGHoXP2Jax/fAZ2wKoGb33JK4VRTMqJpVJZ5jk4GCxlLWq1RqLTG41YtiR3WqRymRyVq2RJmIpA+DgYGmkzZoJAFzrGKh0LR4JOhecWd1R/MBi16K14vPBhrmtJdx/KBLik8ZYZdJPOnJEtXUhy+Y5Iw5FqevL2vrFtbVTF8+zhT8mT55bimJVM3ZOUSZwW9XxscrpexhmCqPwficqwW8x04C30UwyY2KYSB9rVWprCmJRkDTKYgYqWCbggS1YgKpZRUd5eXt7eXkHPsFtOoY2c8Pp8tgMZGvnwe17YuDvWDle0dxcWwvXoXEXvtRSVKhSFXHbBViRioW/VSycQzJQlIjfBi5lMIxSQ1Yjx22nd0KBTMza1KwKCJDJ5TabHQ4lWCxPtmsIxIKbZnc9ULt6dklJrCyzp7Bofjp+CiVERyfFJXiwOCjFkx7HnuTaMh8vzTHnlVu7ZucvUSXlsOY6k7neHJcQL5MaE09MCQvJa8qxHt+kPpCSp7YwiEgRc5ZKEZWhs4LowJMmrwl9KNpLZFMGpxhpt0iDsTQqUi5lrywd7Htm0VD/gpPDSP3scyhtXrib+++xR7lr7nCYKYaZ2/iZcqst0pqJNVaLLFIahcXhC/qHFj3TN7i062q4G8U/OoZYd/g87jfPPct93AHiyZQjN3oHpDUC/pCL5WKNnLWLNXaNXa6xiNGBrHXrnAtiVkb35K5b63DH3heLzy9M0y1uHhlpWZqm7WsaHQUcOUwnduAOOHsGsSCLIOQggRbsOPX0KfiPIk6ffvTMGbJarHcTc5M5RHZvF7GSmwPLsg9xnyEF4/UymSgafY2Ow8ldZchYrfd75lvmNMEqC9DTLkFFp07oJmJCvUXoJdE5gheBpKGXuBvH0HTRudsPBS0nOmlgRLgTfwW4YibLZbIgADKQQZvVsHX//q3kQjv0RUX68Iz09IxwzL722nOnXnvtVO+yZb2FLXZ7SyGsGAcrpeOPQfIZiVUZwUbEIelpnPPkuBrnEIpSmFCcgK8zsQxjE+diIt+wEJuL+bXFSqnSWibqXl6tVqvTjuGi5UX3rdm3HIVxoUdxrXvIlmp0ZDYM2dZ2LznftHMTwajz/oDV+M9MmrADikZKv8hWQP1lgiIB//kfqmAwO6PLK5bY8/WOfMeyitUPBR1H6UZN2qyCpCRLnpZVp4hO4PuGM1uz8ufODJI0F+V22lbdp7cYUtLTdrKGZK1RRfgHGoQ34neZUGYGnJwVWSLArMFJS8SWDOT8VV2dZ/ozz4zsQK9yxftHRtA+Duithzkt+PdMEhCvlNp8JBM1DKCVkBihxCbu9ahSXUWPcXT1nFUu0Ylgo9ZkTDeq9OJj6H1ctEMWX7g0b+WD9m6XItVpzshUxqEzQFeu9w4ug3ONZdQgMxSbTThderxUasASBlOV5ldEe7QpDjOSzTV335ezvGps9aZdFX3WKU+udVgz9BazCWen9CxhtesHyvpzL5+9eCFnvuOSxZRusxpNNnIO8XDz4t8xwdSHSJRWJfLefoHj3kB/xK3jx3HJPmKlbd5/4DqBMjOcmM/mkEPznxm1Rz4bRMgLpLMka2ju3OVZljRbdum6iop1pdnW70wajSldrU7fmu1IT7c7jOjFJbYWq7XFZpsjj22bVdJns/WV5LbFPGcwpmoMRs1/WQw6m02nzwReZXrHQUv/DJKrYYgFJqsJNASwDM7GJhwMIeVGlVUvqzS5FjhmLa/av8o0ML9yiSPo0AZzpl5vsaQ/MG+xQmVdVFHe7/zFmZGTzc7unF9Z9OmZVmOaleg01WFcBr4KbBP4TeJ3DwDc7N2EwvFsoGQmk4AeAupmRBPeOpjN6PegQKBVKRqwx3IU9NZbH7399mbqXDFTyDyMh3Eq74MRqNAUuPDw+Ls4Ha7UAwe8Bw4QPHmA5zMej8QiByXI+4jgwTmCj46FSOCf+HNGzrBAFz0UMMZ+kZSyauAJDowOVm1e1zvlkSnOqlq1Kln7FLYvqxrwBQufDy6ctwhVvKg2s9pUdla3Y1ziN06YKfMqRH/DjzN2oB7W8uurT0JhCTlxPX4/qBKkwC6fOB8ceCj4Dz/tzFlRYy2aHt+cWd7gXJxfnxiyQy/SpFv2bhk87969qac6rnvt0PPz9twaq8tIUCv12SolfrzlqUUN+5p0ak1aS1XZ5mqn9XZkmH7dnBUjS18aXLMteVla89NLD3y3c/y3KodSlVaZqdQSXoXD7T18ETgeCqcCQY/EImGnYfQt94PuDPcad7axqXH9enxxPB+B8eW8RPpzYU4/zAkDDicJHGaVEUre9vkYzUbyX+AqksvX9XMXkHPJmtk2blBnMOgGT5oy0tZvRG2ds5r78MXu+ty68OyU5GQ116BJSdE9Bqes9N7G7+DXiC2OpDIMIc+EMtktgnwrW59auOF04svSqoya7u6ajCrpy4mnNyx8qhW9fqRtdEhv7G9v7zfqh7a0Pe0mNgVoPwu0hzKSifMC2gViIyzo58fb2k70c7eQuHHp0q7aWnyx+Ul33+Fm4MGHi7u6lnJuIoOAB30NeMB/SaTEXILJj1BKv/r8cyTi6tApbN0zOvYgvvggPxaLYWwIlWoyGjwKFnP/8+GHHhixfyt3DZ7yO/4d7JhEloFbZa1KaRgO0GY5DpeUpM9dsKg9rynqd2hY0rar2X2kDXa48fl49Ac2ZVlb1zKXc+OTrv5CAMKjtUsFOg7xNCOggPg1C9zxIQ930+NBofSUldyn+CL3FyQRdsl8BTNIPAOjv/KQIZTWWO8tdBN+EZ2P4L2thTduEejmhsUD255NVilUgEk1sHrjsN6gVaNPBIz4OOU/oxRRAiQWhNBvvvZ4rr/B/R3FIhv3Jkx7G2Vyz3BjAqffgBmg7RA0KSMsX/2BW+kZHQUQ/1TUAj+n83uCsJ8glUhELZ4ndhzyvPnrK3RXx7g2dJxrBcSx6AsfHaf5M1GyZKYFRVjwaQ/3P8CJRA/6GVcDg6uoH1J6b+Fv8OuwV5DFoIkIk8pOoOoizbGurmM9Pcc65x/tqe/trW/o7W0Qtx/r6zva3n60r+9Y++OD7R0D/fM6BhhBFhso7VLgM+ACp0u0SCYN9qtOQ9Zw42IPktYPZ38C8UpHB3qyN/cOvpi9ML/ZqNMZf0rp2y5CQJ+ESM4UTaDdpxopZyb8sRSbW7XqHh+dZbPHxt/pbeBpXb1mqp/W1p9kXEDrB3hyBVp7BZ2HkyMSrBTQS5BP49HRfakepJi7Mrum6mludLEJPotRCPdPoLc3t7hfzl1HI0ad1shHPLewE6jWkQgwIGhQa2iaM0nh5ZDpEGb/bW0ZPhdkTFHrWYupsDF3z9DwnikXsDFZoXYVFjbkzhquEZu7izSprCJWJQuT6uryuwcGelQapUKllsl1c/Kc3dmwNrgjbKdWDzSS7IW1YvuLnhdBG8ffwtYHCX05QN8DMEZCZF8QbUuEz7VHfJHrdLo8cx6YO3dLJUhKe15hYR46ynXMG8mfvWUeOgIYQLbwVcDAxxIikEp89daHt86deoFXo/G/4kiyEkStQUGCDMM4fij8Dwo6/87g8Dunz/dueHn1QirH/48zw2IIecnFCDs5w+u0UgPWW2QBdyOSoK8f2vjKZ1/85+71r3z65UcfoV7U8sEH3CHuKJkDu8YHYc5Ush7EeZSyg996vn1lO2yY0335JfqQ+xipyViIbrCK1xM7iWoRRETSG8jIhSM99wH6+65dI+inu0Zg5GrIU45CniLwlKgqOrprF/eBaO+OO2d2BnXDmPPeIuzmI/kpCPT+Co3kXwpafvsheNoqZDqAYYrSaoFDUaJt3Ae7diH91Z2iqh2EnkTmGD6BLxGe2qmvEr353D+Of/PcwWM4bvxz1EDGNHgt+LL3I7oKiSAuj+9PPUp3HorrmduiXGrPpBrr7W/wm6t6txJdjPd+jxdhGxMJK/j8DSVBOO/kgDgufvZgUU5LtMcT05JTODgbPV1isZSQC/WPFKdrasbfq9Gkl2xpzCsvc7kqyl1U1wH/TsjEKH5mwnxAqECYFSELwI9Qa3bR4GyySnOMx3OjJJOiL8XB6cUjjY1bSkyaanyNu/1AWbnLVV7honEr4HcB/TEB3tKH0e8r40s21S3aLTsnzzdlZZny5edke9x1myjZ/QtcZYWFZa7uweKRJj8/rk3iR8S/4Ye9LdbjiW7JKbqbH0YNEo3Hz9FOYgiPvxLojSY2ixErZZTOSV5OJtXwKQSuFHEbgnLSXDHnwsr6C+vuLy25f27txpIXnIa0HDGaGptpt9mbzUB400hx4cZ6gz7TbASekKy3URRONBjxSm6hhkUuVQdLpRbU2O7JzV01JAnJ0Lajw9x8dHhPeN8StFek0k+hMsH9hcqEgmRlDJWHydlYYIw96QCrQDpmbehYPzbt5FSn3poX05zDH+hzPtZgGxGU96s2lK9ckJQyq6BGkwEMahwp/tTHI95HkTOgkYoUNsBbcOo1YUX03fCz2RkZ2R5PbGsWztw0wL2ITFm5uVncVZAOb4qe7AFMLXNLpKSVGyawIiYHNH1CjNvgwW6Iaa1WiGmzx9/DMAl7P+NuMt/TmfLJMyVw8UlohGWhgKHR3VGQGh8dgGd8Tl/bXlkMXu3ztqRqRrw+L+/USD38rMdz8v0vr1+/DgT3/ZH7krs+EXVcC4g6ro3Hw9+8t/8KZ0LGcTdHJljDJ6NyuIv61z3rMJsd9AZcqrfm9cQnLMjBmRsHCa9sOTk27qrvGxuL2VSb2Zjt53zmvThP0KMbK32cb7bfxXljeUqaIN/zQXZozCD7NzHD9S0VlaN1daOVVVvrMooKMsz5szOmgig3bikuBoHYUry/tKCgtKSwoJRYEe4mWBHbvawIpW2SEGKf0GW33NOKpKu5Z0RZNRNWhEj8TbrvSMLhACsY4dd6XwLDl1Tii1YWWetB8xPmWguHi9DTbJYiMSs5OSsx0cGiRSNlKUrXndfRHFZXOjLXOEuhyDUY6F2I6w7CWtPpTqR+/iJxq93kckEY5rWetRdx49hIa1lJwFER7P3ueIEPF34UL8gJX347lB90UpTOJrHmLOecbGtfyaI1IYeC0tjEJIsttzoH2fsKp5qbbAnJMVHR8rAwRYEjvcbobkxQyaOio6eHK4qyM6r0ZHWI0NBKfI5IRIqURLu+OhiE/iTyW9nU4S4s9AwORsfv3dvW98me7dv3/CFGRrJe7w8QORlJ5RhN2E8SSvAxBe71xLbYXN02EClzNjaOv1eZYnAsLUPF3FUiU8jECLGEG7CA30uRWEiIgBxrzr32/mvnD6M9VGUREwTa0Qm/7o4jRJ0Hftnc9vJBT828s53VZAW0mHsEG7nl6CFuBdpN8BODVwpz744jti9pvfCLX16C+0uXHnsMJaCIsTHuT9yfSZnEC4HdapgjpnU5CQ0jVnNP/+L+P/5q8/3YeOcNFI/juCOoA/CTnOZdGBvCR/FWCUlqPvkHV/PlF+jZ3bu3o5jd2wkdbV4Dek60j9SkJERNNFR1LLx8RMknymJiKucWKZ9m26kktGUYQ1Gou6lUkxQ/NcQK80OmxidpSpvcADZmoKNYkxw3Z2oT29C5Kz5BVt2VaC8NxdNKshK7KuUJCbs6G9mmqXPiVKkYKHF6NzF/EpmIFZKDXP7J49ks+inAS4DCgzyFDCWJGkWhKqehxFgJ0XZ/tY4STcVSivr+PYWxqSpKYGPnroQEeWVXYlbJNBxaak/sqpYlxO/qbKAEJmvwdlqrehd3oZPUPlP5l004ew1RBTFr7KtOsiijVZG2kE2RbvI7BlLd0A0ob7FEEhaWP7A4KhK+iO53ejuQDjsFT+EroQLv4VzZb8DGG8DWV+yNuoCdvvqHl+GUNJL3YDNuIDYpmSbmfMsisFfhS5A60qc+IV7b6hrcsGHQ1bpW/ISk1JKdbdmaGDe3b2ptbejOgYGdobW1U/vmOmZnZ88mEpHsvQORwp+ZZKJ5Sg2wjKie+sc6T1WRRAscjjbpl9VKZvWXDK8PegJrU7X6adPOPp6kGtlWr5tXhFcUOgoXZG7s1Zoy0uXpKStEmnoFcMDJPIKn4Pl8DY0h5XJggUassZPT1NjltJYjF/vSM2FL/2Bt+a40u13vyrcrVVn5BYZMsyE/38aeTtMlKXQ6BZpltBW4IiNdBXajM9eQVVAQEZ5fYDPm1aVqtTqdVpsaEJPLYMsWqVjMV2BhoxqN1UL1GIcsOJx06XXP65eSDi94CEL1S+jkCjRraNu2oVloBZJybyA7OcdF3k0oisot6WSB8ZaA9C7ykI/IxC0cv47GYFSiNwkbIPsyMTlwahNVZouZpmBCM2WCyayKGH1e2MXqwHJViN1d0rs66GSQLSsuL6+u3pJV8iPIKoNBrYaLnWOpM/Y1FmVIk1RxbMssc4005y5QRkVsqUGpNJAL6AzFS1Ev9v44CjEH/M4ELifp0hQnhW+8VKdQCNznv4EbasjnvqBZvILJDqzV8bsMw36vBgxg/X/a2Ylas9wCT9BfDre0HO7ro/eW0ZKS0Rb+ntfrcPS6aobCH44wp+h0KTGs+OHw5XPw621H3W6SVMO9Lav8wfa2HRUVO9raHyyvti8sLFxoby3PyLLZsmLllc2w4xjUgc7j/2TCSS2a+mAhEaGkBpTWpTH6SmN16ubNmqr0Kv1WfVKSnly4rE6foecO60z6Ortal5aSAhftkqwGs/YhWHqw8XZaf7XQ++b6+kNNTQX0vvoF4UM0z8T8HD+CXiS+gXguyKQe8XCF6EXuh9GRyT2dMOBnEKNBMehj/AaNeWj38m4eRwbIjS1YLGc1RMjJIYqJ3LEscvXY7T15eT1ZWT15pY2NpeTqkkZa6rTBpQOsbmV8eHg8fsPenZdLBubmddu57c2lpc3kOpM0ta68/AO1ImpmGM31htEYvk67RiRxHeMG8fVVqyiH29A5/Gvwk9GT+kWTs5qYoY6O5cvbZ82zohh9okJvUCSm4QVdXXPn9hjq7DqjMS3NYEgjfHIyAzgbD9FamJQ4N4s/OEC7TnH4FO2T9XYeONB5cOXKgzBDheajLvwm0XYJmcD7CrDXvmK9+NQp7q21WWHT4kT3i9qqSittLvTqgvnlbMqMmcnZxfmGZJsC8MxE7agD8KRM7AO8I78bqsx+HyTgl9fXFTUkJ5U3lzY0BG0VJYZFSCNV8ZrwmfFBa/FocY5RoRaLomYZ7a5sRXh4RESWMmym4u7MWWy13/7mG3yhd9UwPKmAmHHV5PiGBqP++GaVJ6bJIZc9S8NwEn3UpZqmcjdEEC2TyJuPb0DW8Rqwf+GkHhdB//mkRonX7M7dLa9dYjYvqUUD2Dn+KorI6crO7s4hUmhmPmHG0UHafwhlviC0ct8BUjFEscwk50w5If2sus4xtiUKPiV9KQ6HI2fe9LCwaZtplBeF5jNX8SW+70eULuqXm3FHD3d4nBHk5mcgNzMnatIT8j1JdCwdTmeHJRPu7RYUpVMkpmoVCh0urjUaa63WOpOpzqoBy6/RpakBrxk0c4pPMyUa0tJIofcHmw6BVqIs/kvjU80ghpTub1A6Q4Dvch+1pA8v9GghyLJoxBYt0B9L++0oTrv5yr7T2iPV1fyOumgJ6v7c3MJPfje6mdT1tV4v/kHAmgQ4WYKUdFz/hYwucPqx9/9IXOkiaD7p4o8fuVtyg0hdSdRHJTeVyWTs/1f5/fEOs/+dRF+Y2PoDv6Rb/1cyPkgJ3Ui5sWcPOW2VtwZ5aTzk6yIJfoB2jux2ixwOXM4fuEUGUoA2CMnw80I3qboWaZRCO2kiaBqXCA0ljUWloQ0lIsW0DyN6F/IuFe2lzWauM/vuAR+eBPf44ZeZtwPgW/zwK8zRAPheP9zNXAiA/94Pf4X5K7MPdg95hmgHre9H8laNpZaNFbNIKUURIrz700/HueY/OS+gPpzANR/D9v8YOfTAqlX44gPcZVTCXSD6pOS+oT0cw0RkaL5bI++RvlnQz6qkL8c9vChzQldbd1RO7vQ8YtT3bgrT+DV4fWjnWKd7oudDuEq7NJR7aoGrO+iu74YPT4J7/PDLzJIA+F4/3M20UDhoHppK8egE/DPuCR/m4d5bADdR/Dz8svdvFE5aErMpfh7u9v5/egqQ0eEXadU9LrBbRRRT6W+vkaNBF060tp4Y4G7l5dG+1fzagwf9nSsUvQdFj3+wtKtr6bY92wS+4NNUSkyClHgo3bTTQelO5/eDRPeED0+Ce/zwy8y1APgWP/wK83IAfK8f7mbeg30ipohZjLNwM7F/KRr+BRUItOXo9Z0PDjy4dXDrlsGtuxbv3NG/c+vA1q39W3cRayUDXHcgnosGWwX2EE2UQsSs/zUgSGIZOaJilaxBVFfxQZ1x/tEe5zKD1b0gzdR1rGf1PKt7/P14NNXobOhFK+K4743O+l5cZ1pX0nesXaXM6TetL+k72p6fzc0zIzaxf15BBvdJ4mA77Ih2CShnbIIEfEx3ejd8eBLc44dfFjjDw/f64W7mJIXTvIDiyRbwvEElw9c7ov0YX+8ILOK9ukcnl050j1IWOLfiiyOOHldruk6X/nOipRnem/h18tJOoFcT0whYfo83UITkwF/EAl+dUXR/U8WKPC0rkoWyjqoCW8/snrXTnwhSK+ISVBmNZQpFTLRZZ818FrctzsmozzDkqUTyCHFYtDSh2mmdY+hpVyRDdqGIUMwyKNKVcWyUgrWZx29iGZFWWouG2EPFQKIKJz+beZe5F3x4EjzGD7/MnJ6A42/88Cug9RNwrx/uZp4MwFPmh7/CfEC/AR4UgW00xnX6q9e+lrRGyk5+9wLCd6lQz6YGThyYPgZFTOG6xQVGbea0c9L1Lc7OuCNxrQ5StxsqzmpOeGrWmtLleS+gQoupMOSfJXz1GE2Pt2clxjYsNaXO4QvrjSPFel11dWPRxjq1yZ5pfpGU9EgdmURWYINdfN0s+V+YYPWkRI+3wCvk5yRDDQEGuG/9pO7BDlfD0hkT8dPa8APDTf42go97laJ84F6xoBmnmKB7wIcnwRP88MvMQwFwkQAPZtzrCTSZeCV69pcY4q1nxzL3gA5TKOm/Oak88NDLdwDq/Rag1fTUeaj7K74PdAsvwNcgHtUKXj/gKOVgW6x2UAW5XSrGgUlwsqtqtK52W3XZxiqnQ5a4KFeZ/ERiZ8aawmJTelFxOi56vq1vX0XJSGPj5iKFSZtUIGEViQkFM8d/KC0sLCkpLCwVrDIvnzWCfD7ul8P5lGNzBE7+2s+ZQPjwJHiCH36ZOTEBx98J8GDmysaJ0SL/aDezH/yOiLEyCpyJD9F6EPE+gb0DiAQmvV07TYh87nDoQ+EnuuYLeLIPHOBWTrzPJ2JmwIpukEgpk0AyFyRwmdrtALNtp9y1acS82Y4pqNpa11WW0l5dUDla11OmbufmTTsZl2LO/xK+2Iwi9NvqFY1bitO1DdXD8J2Ryr0a/4uoksLk+AuRpQWwU1qJpdLRKNiRtyh/74YPT4LH+OGXmecn4FRyGgV7MUbgfD2U4mkV8JylksVX7a9BrEXelpnIGnw1+8k1daRaUrSysHBlkdvp8dxgHYmKLJa/48yykblzR0qbuWOiv3qfzlWAtTTQu391SlWrQNUofdOyAu43IT8Tuik3PSQFo/ViyOmQC/Y3hc/p5NJjjz32GD5et6qmZhWhOwQ3MRzYP772MlEGkQa8nGLlSjIzi4szM0sq4qRRcXFR0jj8aH6+3Q6XLC5OJo2Pl9L6Mu5APwHZhj8iA0qVE5XKhCGZMjpSNj0luDna91PchL+ZMSM0xLCf3gmeYhSNl6PjvqweLx//DToOATt9ImqfeCJqv3NdeKJGp1GI8BYLK7H85oXBFQCZTjwffEcJTywithee4IvcDdKT9x5g7jBH6Lus8KQKnhyBB8AVgu1rOkfM4/PhfOHU4BDBy90A3Jji/qd/HOBAwgpILixDhvLvqx1An9K1xPxqZGQ1HQkojwgDEWMGOWoXSen7OxpYVWwlr/HacfvVCE/Eu+/C7Sp6bsb4LHxlxsiMGzdmMAFzSA80wi6lLwBbwfXyU6Vo51V+sjD9AvcoP3dkBuoTfgGWBcx5tBddIxUO2129rKtFWm1Rqo7cdef9v1KLtMIbgvgD8L4szPw7yCF8o8+oTsykshnlvY29gfkBkQe+uktepg9MC0hFlJTb4QtkB31WKSPvea0/o6zOQyivRnlmHckNZJUZ6ZXyE1cQunJSXpVxwJg2tGVkoCUkUhLa2r95dCjNoNO0hkRFhrSk6mF9XwXLVyP6mislMvO/0m6VgwAAAAEAAADSAJAADAB0AAYAAQACAB4ABgAAAGQAAAADAAIAAAAAAAAAHwAzAGMArgD3AUIBTwFsAYoBrAHBAc8B1wHtAf0CJgI2Al8CnQK3AukDIwM2A38DuQPFA9ED4QP1BAUEOwSbBLUE6AUTBTcFTQVhBZEFqgW3BdMF7AX7BhcGLQZZBn0GrwbYBxYHKAdJB10HeweVB6sHwAfSB+EH8wgFCBIIHwhPCH8IpwjXCQkJKQlpCYsJqAnOCeUJ8gomCkcKcgqiCtgK8AsvC0wLbwuBC58LuQvPC+MMKAw0DHkMoAygDL0M7A0hDV8NhA2XDesOEA5kDpAOqQ65DsEPCA8VDz0PVg96D68PvA/fD/wQBRAiEDEQXRB2EKEQ1xEoEV8RaxF3EYMRjxGbEacRyhIKEhYSIhIuEjoSRhJSEl4SahKWEqISrhK6EsYS0hLeEvgTOxNHE1MTXxNrE3cTnRPtE/kUBRQRFB0UKRQ1FIwUyBTUFOAU7BT3FQIVDRUYFSMVYRVtFXkVhRWRFZwVqBXVFhEWHRYpFjUWQRZNFoAWjBaZFqkWzxbzFwAXDRcaFycXNBdIF10XcReLF64XyhfaGBoYJwAAAAEAAAAEAQZy38eQXw889QADA+gAAAAA2KSpyAAAAADbFjbJ/c79ogmtBFQAAQAHAAIAAAAAAAB4nG1TO2hTYRg93/en0UTFB7HV602iaUyCmkpCK6YpkUit2AhdKoIlCCq2uijiI6BFxyDFQaGCDkJRsrhXcSrYRREXRVAzdHEuVMF2MJ77EEJwOJz/eb/znfNf+QngEyB1nJWnyJg6IvoQB8xFxE0MSTSRkSZOE+u0G6N6HUWJw9Jh9IvFvUWEdQZZqWGXFrFXq9inL5DT+xjXaZS0B7bWcUgned7m+QnkNY2CvsKwRnFELViBwzihS9iij3h+DXv0CzlK9PrzbyhJmuOjrPua4yZKZpbzZfI27l8lR8gzXJtk/THs0AUU9StCARs79T3nz6h/HHn5g5pJYJ58RhcRMxtxSnrZQ4M6G7xfddnWKdgyha3ueM6t3yep1pJe9rQEHG1cZ4/ePZ6Tl+Q+7JZZbOdeQa8hZM4hoCfRpbVWS5YRlxVMsN4Q+bjegf3Pe71F3Y+R1DKGHK0yjUtaQUyuIGw2ICWf2UcWWf2Ag473qkjLc4TlI9dv8Ht3kZCb2Cxd7GUBFX1LPfvZbwFhrCIi79z7efqVMQPEbeZgIeH6/h+YNwi63kf9LHyw9x4PrVXih35nf34OnaA3x8jdbhbtcLJgZvqb76Th+92BQJZc9XJoh5SR9BGUcmtF73n5uDl04jwG6M0mN4t2MAs3MyeTMioySh+DCMkT5jSPETOHERmk54PISZK+RZEicrqe7+8BfSPkFy5Qf8bY/F/i6P8L1LSTqHicY2BkYGCR+reIIYVz7t9zPyU41zIARVDAJQCe3AcveJxjYGHOZNrDwMrAwNTFFMHAwOANoRnjGIwY/YB8Bg4GOGBmQAKeIW7+DAsYFBTWsEj9W8SQwpLPVAwUZgTJMekxHQRSCgwsAP+SCxYAAAB4nGNgYGBiYGBgBmIRIMkIplkYIoC0EIMAUISJoY7hv4KIgpSCnIKSgprCmv//gXIKDAsUhBUkFGQUFCBi/x/+P/Bg44N1D9Y+WPNg5QMVsEloAADHHBdMeJx1jrsOAVEURdcwnoUolUoKj8hEhAqJREWhUnoTr8yYwu/4AqWv8g32XCNCyM3N3Weftc+5QIIxUSw7BVx0n9oio+qpIyS5hjpKnVuobXLcQx0jbcVDHSdnZely4MgZlzVLVpzIU6Nqbp6RnLneoaGOYvZ4pnblbNSbmkQbX+9Knmv6BTPppIRHk4rOUtmA8JlQVurATm7gLaR9zZ0pe5b3uav4VXdUbcX29bceA1o/fvdigp6jbVUdR3sbf8k39UmUXsQDL6o45AAAeJxjYGYAg/9bGYwYsAAALMIB6gAAAQAAAAoAHAAeAAFERkxUAAgABAAAAAD//wAAAAAAAHicY2BkYGDgYtBh0GNgdnHzCWEQSUktM2KQA5KJDHIMLEBZhv//GeAAAKU8BvYAAA==) format("woff");}
+
+  /* ===== Closet Coder — Icy Aurora brand ===== */
   :root{
-    --graphite:#191A1E;
-    --graphite-2:#212329;
-    --paper:#ECEAE4;        /* neutral test surface — kept desaturated so swatches read true */
-    --paper-ink:#23242a;
-    --paper-dim:#6f7178;
-    --line:rgba(236,234,228,.12);
-    --ink:#EDECE8;
-    --ink-dim:#9A9CA3;
-    --accent:#6E5BD8;       /* single ink-violet accent */
-    --accent-soft:#B3A8EA;
-    --warm:#D98A3D;
-    --cool:#3E78C8;
-    --ok:#52A57E;
-    --serif:'Instrument Serif',Georgia,serif;
-    --sans:'Inter',system-ui,sans-serif;
-    --mono:'Space Mono',ui-monospace,monospace;
+    color-scheme: light;
+    --shell:#F4F9FC;       /* cool shell  */
+    --glacial:#D7EAF7;     /* glacial blue */
+    --aqua-mist:#98D8E8;
+    --cyan:#59CBE8;
+    --electric:#42E8E0;
+    --periwinkle:#8FAFEF;
+    --marine:#24507A;      /* marine blue */
+    --navy:#2D4059;        /* navy graphite (text) */
+    --violet:#8B7CFF;      /* neon violet accent */
+    --ink:#22344C;            /* primary text — ~11:1 on page */
+    --muted:#41536C;          /* secondary text — darkened to ~7:1 for AAA */
+    --violet-deep:#5A47D6;    /* accessible accent for small text/labels */
+    --line:#CDE0EF;           /* slightly stronger card/border line */
+    --card:#FFFFFF;
+    --radius:16px;
+    --shadow:0 18px 50px -24px rgba(36,80,122,.45);
+    --head:"Poppins","Avenir Next","Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    --sans:"Avenir Next","Segoe UI",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+    --serif:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Georgia,serif;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
   }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--graphite);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.55}
-  .stage{max-width:760px;margin:0 auto;padding:40px 24px 72px;min-height:100vh;display:flex;flex-direction:column}
-  .screen{display:none;animation:fade .4s ease}
-  .screen.on{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  @media (prefers-reduced-motion:reduce){.screen.on{animation:none}}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 560px at 82% -8%, #EAF4FB 0%, transparent 60%),
+      radial-gradient(900px 520px at -8% 108%, #EDEBFF 0%, transparent 58%),
+      var(--shell);
+    color:var(--ink);
+    font-family:var(--sans);
+    min-height:100vh;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:34px 18px 76px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .shell{width:100%;max-width:780px;}
+  .window{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  /* slim brand bar */
+  .topbar{
+    display:flex;align-items:center;gap:10px;
+    padding:13px 20px;
+    background:linear-gradient(90deg,var(--marine),var(--violet));
+    color:#fff;
+  }
+  .topbar .mark{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.95;}
+  .topbar .spark{margin-left:auto;display:flex;gap:6px;}
+  .topbar .spark i{width:9px;height:9px;border-radius:50%;display:block;}
+  .body{padding:32px 34px 36px;}
+  @media(max-width:560px){.body{padding:24px 18px 28px;}}
 
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-dim);display:flex;align-items:center;gap:14px}
-  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+  .eyebrow{font-family:var(--mono);color:var(--marine);font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;margin:0 0 8px;}
+  h1{font-family:var(--head);font-weight:700;font-size:44px;line-height:1.05;
+    letter-spacing:-.3px;margin:2px 0 10px;color:var(--navy);}
+  h1 .em{color:var(--violet-deep);}
+  .lede{color:var(--ink);font-size:16.5px;line-height:1.62;margin:0 0 26px;max-width:58ch;}
 
-  /* ---- intro ---- */
-  h1{font-family:var(--serif);font-weight:400;font-size:clamp(46px,11vw,86px);line-height:.92;margin:26px 0 0;letter-spacing:.01em}
-  h1 em{font-style:italic;color:var(--accent-soft)}
-  .lede{max-width:52ch;margin:22px 0 0;font-size:16.5px;color:#D6D5D1}
-  .lede b{font-weight:500;color:#fff}
-  .axes-pre{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0}
-  .axis-pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;border:1px solid var(--line);border-radius:99px;padding:7px 13px;color:var(--ink-dim)}
+  label.field{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--marine);margin:0 0 8px;}
+  input[type=text]{
+    width:100%;background:var(--shell);border:1.5px solid var(--line);
+    color:var(--ink);font-size:16px;font-family:var(--sans);
+    padding:13px 15px;border-radius:11px;outline:none;
+  }
+  input[type=text]:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,124,255,.18);}
 
-  .gate{margin:30px 0 0;border:1px solid var(--line);border-radius:4px;padding:22px 24px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.04))}
-  .gate h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-soft);margin:0 0 14px}
-  .gate ul{margin:0;padding:0;list-style:none;display:grid;gap:11px}
-  .gate li{display:flex;gap:12px;font-size:14px;color:#CFCEC9;align-items:flex-start}
-  .gate li b{color:#fff;font-weight:500}
-  .tick{flex:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--accent);display:grid;place-items:center;margin-top:1px}
-  .tick::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    background:linear-gradient(90deg,var(--marine),var(--violet));color:#fff;border:none;
+    font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.01em;
+    padding:13px 22px;border-radius:11px;cursor:pointer;
+    transition:transform .08s ease, filter .15s ease, box-shadow .15s;
+    box-shadow:0 10px 24px -12px rgba(139,124,255,.7);
+  }
+  .btn:hover{filter:brightness(1.05);}
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
+  .btn.ghost{background:#fff;color:var(--marine);border:1.5px solid var(--line);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--violet);color:var(--violet);}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
 
-  .btn{font-family:var(--sans);font-weight:500;font-size:15px;border:none;border-radius:99px;padding:15px 30px;cursor:pointer;transition:transform .15s ease,background .15s ease;letter-spacing:.01em}
-  .btn-primary{background:var(--accent);color:#fff;margin-top:30px}
-  .btn-primary:hover{transform:translateY(-2px);background:#7d6be0}
-  .btn-ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);padding:12px 22px}
-  .btn-ghost:hover{color:var(--ink);border-color:rgba(236,234,228,.3)}
-  .btn:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
+  .progress{display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:12px;}
+  .progress .who{color:var(--marine);font-weight:600;}
+  .bar{height:7px;background:var(--glacial);border-radius:999px;overflow:hidden;margin-bottom:26px;}
+  .bar > i{display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .35s ease;}
 
-  /* ---- progress ---- */
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}
-  .pips{display:flex;gap:6px}
-  .pip{width:26px;height:4px;border-radius:99px;background:rgba(236,234,228,.16);transition:background .3s}
-  .pip.done{background:var(--accent)}
-  .pip.cur{background:var(--accent-soft)}
-  .qcount{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-dim)}
+  .step-tag{font-family:var(--mono);font-size:12.5px;color:var(--violet-deep);display:block;
+    letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;font-weight:700;}
+  .q{font-family:var(--head);font-size:27px;line-height:1.26;margin:0 0 22px;color:var(--navy);font-weight:700;}
 
-  /* ---- question ---- */
-  .qaxis{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent-soft);margin-bottom:14px}
-  .qprompt{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.06;margin:0 0 14px;letter-spacing:.01em}
-  .qhow{font-size:14.5px;color:var(--ink-dim);max-width:54ch;margin:0 0 28px}
-  .qhow b{color:#CFCEC9;font-weight:500}
+  .opts{display:grid;gap:10px;}
+  .opt{
+    text-align:left;width:100%;
+    background:var(--shell);border:1.5px solid var(--line);color:var(--ink);
+    padding:15px 16px;border-radius:12px;cursor:pointer;font-size:15.5px;line-height:1.4;
+    transition:border-color .12s ease, background .12s ease, transform .06s ease;
+  }
+  .opt:hover{border-color:var(--violet);background:#fff;box-shadow:0 6px 18px -12px rgba(36,80,122,.5);}
+  .opt:active{transform:translateY(1px);}
+  .opt .tag{font-family:var(--mono);color:var(--marine);font-size:13px;margin-right:10px;font-weight:700;}
 
-  .plates{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .plate{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:var(--paper);text-align:left;padding:0;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
-  .plate:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.4);border-color:rgba(236,234,228,.28)}
-  .plate:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
-  .plate.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-  .plate .swatch{height:128px;display:flex;align-items:flex-end;padding:12px}
-  .plate .splabel{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.78);color:#23242a;padding:3px 8px;border-radius:99px}
-  .plate .body{padding:14px 16px 16px}
-  .plate .tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
-  .plate .desc{color:var(--paper-ink);font-size:15px;font-weight:400;margin-top:5px}
-  /* split swatch helper */
-  .duo{display:flex;height:128px}
-  .duo span{flex:1}
+  .musegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:560px){.musegrid{grid-template-columns:repeat(2,1fr);}}
+  .muse{
+    background:var(--shell);border:1.5px solid var(--line);border-radius:14px;
+    padding:10px;cursor:pointer;text-align:left;color:var(--ink);
+    transition:border-color .12s ease, transform .06s ease, box-shadow .15s;
+  }
+  .muse:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:0 12px 26px -16px rgba(36,80,122,.6);}
+  .muse.sel{border-color:var(--violet);box-shadow:0 0 0 2px var(--violet) inset;}
+  .muse svg{width:100%;height:auto;border-radius:9px;display:block;margin-bottom:9px;}
+  .muse .mn{font-family:var(--head);font-size:16px;line-height:1.12;margin:0 0 3px;color:var(--navy);font-weight:700;}
+  .muse .md{font-size:12.5px;color:var(--muted);line-height:1.35;margin:0;}
 
-  .opts3{display:grid;gap:12px}
-  .opt-row{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:6px;padding:16px 18px;cursor:pointer;background:rgba(255,255,255,.02);transition:border-color .15s,background .15s,transform .15s}
-  .opt-row:hover{transform:translateY(-2px);border-color:rgba(236,234,228,.3);background:rgba(255,255,255,.04)}
-  .opt-row.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-  .opt-row:focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px}
-  .opt-dot{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line)}
-  .opt-row .otxt{font-size:15.5px;color:#DEDDD9}
-  .opt-row .osub{font-size:12.5px;color:var(--ink-dim);margin-top:2px}
+  .backlink{margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted);
+    background:none;border:none;cursor:pointer;padding:0;}
+  .backlink:hover{color:var(--marine);}
 
-  .varies{margin-top:18px;display:flex;justify-content:center}
-  .varies button{background:transparent;border:1px dashed var(--line);color:var(--ink-dim);font-family:var(--mono);font-size:11px;letter-spacing:.1em;border-radius:99px;padding:10px 18px;cursor:pointer}
-  .varies button:hover{color:var(--ink);border-color:rgba(236,234,228,.34)}
-  .varies button.sel{color:var(--accent-soft);border-color:var(--accent);border-style:solid}
+  /* result */
+  .codeline{font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--marine);margin:0 0 4px;font-weight:600;}
+  .themename{font-family:var(--head);font-size:40px;margin:0 0 6px;line-height:1.07;color:var(--navy);font-weight:700;}
+  .themesub{color:var(--muted);font-size:16px;margin:0 0 22px;font-style:italic;}
+  .desc{font-size:16.5px;line-height:1.62;margin:0 0 22px;color:var(--ink);}
 
-  .navrow{display:flex;justify-content:space-between;align-items:center;margin-top:30px}
+  .palette-note{font-size:13.5px;color:var(--muted);font-style:italic;margin:0 0 8px;}
+  .swatches{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 6px;}
+  .sw{flex:1 1 84px;min-width:74px;border-radius:11px;overflow:hidden;border:1px solid var(--line);}
+  .sw .chip{height:50px;}
+  .sw .meta{font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 6px 7px;background:#fff;text-align:center;line-height:1.35;}
+  .sw .meta b{display:block;color:var(--ink);font-weight:700;font-size:11px;}
 
-  /* ---- result ---- */
-  .rhead .eyebrow{margin-bottom:0}
-  .verdict{font-family:var(--serif);font-size:clamp(30px,6vw,52px);line-height:1.04;margin:20px 0 8px}
-  .verdict em{font-style:italic;color:var(--accent-soft)}
-  .rsum{font-size:15.5px;color:#D2D1CD;max-width:58ch;margin:0 0 8px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0 0;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--shell);border:1.5px solid var(--line);border-radius:13px;padding:16px 16px 18px;}
+  .card h3{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--violet-deep);margin:0 0 10px;}
+  .card p{margin:0;font-size:15px;line-height:1.55;color:var(--ink);}
+  .kw{display:flex;flex-wrap:wrap;gap:7px;}
+  .kw span{font-size:13px;background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:5px 11px;color:var(--marine);}
+  .blend{margin-top:18px;font-size:14.5px;color:var(--muted);line-height:1.55;}
+  .blend b{color:var(--ink);}
+  .mix{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .mixrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--muted);}
+  .mixrow .nm{width:128px;flex:none;color:var(--ink);}
+  .mixbar{flex:1;height:8px;background:var(--glacial);border-radius:999px;overflow:hidden;}
+  .mixbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));}
 
-  .meters{margin:34px 0 0;display:grid;gap:22px}
-  .meter h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin:0 0 10px;color:var(--ink-dim);display:flex;justify-content:space-between}
-  .meter h4 .flag{color:var(--accent-soft)}
-  .scale{position:relative;height:10px;border-radius:99px;overflow:hidden}
-  .scale .fill{position:absolute;inset:0}
-  .needle{position:absolute;top:-5px;width:3px;height:20px;border-radius:99px;background:var(--ink);box-shadow:0 0 0 3px var(--graphite)}
-  .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-dim);margin-top:7px;font-family:var(--mono);letter-spacing:.04em}
-  .conf{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);margin-top:6px}
+  .token{margin-top:24px;}
+  .token h3{font-family:var(--mono);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 8px;display:flex;align-items:center;justify-content:space-between;}
+  pre.tok{
+    background:#0E2236;border:1px solid var(--marine);border-radius:12px;
+    font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--aqua-mist);
+    padding:16px;overflow:auto;white-space:pre;margin:0;
+  }
+  .copybtn{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    background:#fff;border:1px solid var(--line);color:var(--marine);border-radius:8px;
+    padding:5px 10px;cursor:pointer;}
+  .copybtn:hover{color:var(--violet);border-color:var(--violet);}
 
-  .translate{margin-top:38px;border-top:1px solid var(--line);padding-top:26px}
-  .translate h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-soft);margin:0 0 12px}
-  .translate p{font-size:14.5px;color:#CFCEC9;max-width:60ch;margin:0 0 10px}
-  .translate .nofit{font-size:13.5px;color:var(--ink-dim);font-style:italic}
+  .hidden{display:none !important;}
+  .foot{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:22px;}
 
-  .ractions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
-  .copynote{font-family:var(--mono);font-size:11px;color:var(--ok);margin-top:10px;display:none}
-
-  .footnote{margin-top:44px;font-family:var(--mono);font-size:11px;color:var(--ink-dim);line-height:1.7}
-
-  @media (max-width:560px){
-    .plates{grid-template-columns:1fr}
-    h1{font-size:clamp(44px,15vw,64px)}
+  @media print{
+    body{background:#fff;padding:0;}
+    .window{box-shadow:none;border:none;}
+    .topbar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .btnrow,.copybtn,.foot{display:none !important;}
+    .opt,.card,pre.tok{break-inside:avoid;}
   }
 </style>
 </head>
 <body>
-<div class="stage">
-
-  <!-- ============ INTRO ============ -->
-  <section class="screen on" id="s-intro">
-    <div class="eyebrow">A color exam · not a personality quiz</div>
-    <h1>Read your color<br>like an <em>eye chart</em>.</h1>
-    <p class="lede">Forget seasons for a moment. Your coloring is really <b>four independent dials</b> — undertone, depth, clarity, and contrast. This exam measures each one directly, the way an optician asks <i>"better, or worse?"</i> — then translates the result into a season only at the very end, where it belongs.</p>
-    <div class="axes-pre">
-      <span class="axis-pill">01 · Undertone</span>
-      <span class="axis-pill">02 · Depth</span>
-      <span class="axis-pill">03 · Clarity</span>
-      <span class="axis-pill">04 · Contrast + dial</span>
-    </div>
-
-    <div class="gate">
-      <h3>Set the conditions first — accuracy lives here</h3>
-      <ul>
-        <li><span class="tick"></span><span><b>Daylight only.</b> Face a window. No indoor bulbs — they fake-warm or fake-cool everything.</span></li>
-        <li><span class="tick"></span><span><b>Bare face, hair back.</b> Makeup and hair color both lie to this test.</span></li>
-        <li><span class="tick"></span><span><b>Have two real items ready</b> if you can: gold vs. silver, white vs. cream cloth, and a peach vs. a cool-rose fabric. Hold them under your chin.</span></li>
-        <li><span class="tick"></span><span><b>Judge your skin, not the color.</b> The winner makes redness recede and under-eye shadows lift. The loser leaves you grey, sallow, or blotchy.</span></li>
-      </ul>
-    </div>
-    <button class="btn btn-primary" onclick="start()">Begin the exam →</button>
-  </section>
-
-  <!-- ============ QUESTION ============ -->
-  <section class="screen" id="s-quiz">
+<div class="shell">
+  <div class="window">
     <div class="topbar">
-      <div class="pips" id="pips"></div>
-      <div class="qcount" id="qcount"></div>
+      <span class="mark">Closet Coder · Theme Finder</span>
+      <span class="spark"><i style="background:var(--aqua-mist)"></i><i style="background:var(--cyan)"></i><i style="background:var(--electric)"></i></span>
     </div>
-    <div id="qbody"></div>
-    <div class="navrow">
-      <button class="btn btn-ghost" id="backBtn" onclick="back()">← Back</button>
-      <span class="qcount" id="hint">Pick the kinder option</span>
+    <div class="body">
+
+      <!-- ============ START ============ -->
+      <section id="start">
+        <p class="eyebrow">// run theme-finder</p>
+        <h1>The <span class="em">Theme</span> Finder</h1>
+        <p class="lede">One visual muse pick plus thirteen quick, gut-instinct questions — compiled into a
+          subject's overall <b>aesthetic theme</b>: the mood, motif, typography, and layout rules applied
+          consistently across their style boards and fit guides. Colors stay sourced from each subject's
+          own Color Analysis — this finds the <i>vibe</i>, not the palette. No wrong answers.</p>
+
+        <label class="field" for="subject">Who are we styling?</label>
+        <input type="text" id="subject" placeholder="e.g. Shelby, Brettany, Sam…" autocomplete="off" />
+
+        <div class="btnrow">
+          <button class="btn" onclick="goMuse()">Begin →</button>
+          <a class="btn ghost" href="color-analysis.html" style="text-decoration:none;">🎨 Color Analysis →</a>
+        </div>
+      </section>
+
+      <!-- ============ MUSE PICK ============ -->
+      <section id="muse" class="hidden">
+        <div class="progress"><span>Step 1 — the muse</span><span class="who" id="museName"></span></div>
+        <div class="bar"><i style="width:7%"></i></div>
+        <span class="step-tag">Pick your aesthetic</span>
+        <h2 class="q">Which world feels most like <span id="museSubj">you</span>?</h2>
+        <div class="musegrid" id="museGrid"></div>
+        <div class="btnrow">
+          <button class="btn" id="museNext" onclick="startQuiz()" disabled>Continue →</button>
+        </div>
+        <button class="backlink" onclick="backToStart()">‹ back</button>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="quiz" class="hidden">
+        <div class="progress">
+          <span id="progLabel">Q1 / 13</span>
+          <span class="who" id="progName"></span>
+        </div>
+        <div class="bar"><i id="barFill"></i></div>
+        <span class="step-tag" id="qN">Question 1</span>
+        <h2 class="q" id="qText"></h2>
+        <div class="opts" id="opts"></div>
+        <button class="backlink" id="backBtn" onclick="back()">‹ back</button>
+      </section>
+
+      <!-- ============ RESULT ============ -->
+      <section id="result" class="hidden">
+        <p class="codeline" id="rCode">theme compiled ✓</p>
+        <h2 class="themename" id="rName"></h2>
+        <p class="themesub" id="rSub"></p>
+        <p class="desc" id="rDesc"></p>
+
+        <p class="palette-note" id="rPalNote"></p>
+        <div class="swatches" id="rSwatches"></div>
+
+        <div class="grid2">
+          <div class="card"><h3>Mood words</h3><div class="kw" id="rKw"></div></div>
+          <div class="card"><h3>Signature motif</h3><p id="rMotif"></p></div>
+          <div class="card"><h3>Typography</h3><p id="rType"></p></div>
+          <div class="card"><h3>Layout / board feel</h3><p id="rBoard"></p></div>
+          <div class="card"><h3>Fit guide notes</h3><p id="rFit"></p></div>
+          <div class="card"><h3>Secondary subroutine</h3><p id="rBlend"></p></div>
+        </div>
+
+        <div class="mix" id="rMix"></div>
+
+        <div class="token">
+          <h3>Theme token <button class="copybtn" onclick="copyToken()" id="copyBtn">copy</button></h3>
+          <pre class="tok" id="rToken"></pre>
+        </div>
+
+        <div class="btnrow">
+          <button class="btn" onclick="window.print()">⤓ Save / print card</button>
+          <button class="btn ghost" onclick="restart()">↻ Style someone else</button>
+        </div>
+        <p class="foot">closet-coder // paste the theme token into the subject's Design Kit (LIVE)</p>
+      </section>
+
     </div>
-  </section>
-
-  <!-- ============ RESULT ============ -->
-  <section class="screen" id="s-result">
-    <div class="rhead">
-      <div class="eyebrow">Your color, in four dials</div>
-      <h2 class="verdict" id="verdict"></h2>
-      <p class="rsum" id="rsum"></p>
-    </div>
-    <div class="meters" id="meters"></div>
-
-    <div class="translate">
-      <h3>Translated into the season system</h3>
-      <p id="seasonText"></p>
-      <p class="nofit" id="nofitText"></p>
-    </div>
-
-    <div class="ractions">
-      <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">Copy my result</button>
-      <button class="btn btn-ghost" onclick="restart()">Start over</button>
-    </div>
-    <div class="copynote" id="copynote">Copied — paste it into a message, or into Claude / ChatGPT for styling.</div>
-
-    <p class="footnote">
-      This is a heuristic, not a measurement instrument — seasonal color analysis has little formal validation, and screens render color imperfectly. The load-bearing evidence is your skin's reaction to real fabric in daylight. Treat the season as a translation, not a verdict. · A confidence flag means your answers on that dial were close or shifting — worth re-testing with real cloth.
-    </p>
-  </section>
-
+  </div>
 </div>
 
 <script>
-/* ---------------- question bank ----------------
-   axis: undertone | depth | clarity | contrast | stability
-   each option carries a signed weight toward that axis.
-   undertone: - = cool, + = warm
-   depth:     - = light, + = deep
-   clarity:   - = clear/bright, + = soft/muted
-   contrast:  - = low, + = high
-*/
-const Q = [
-  { axis:'undertone', w:1,
-    prompt:'Gold, or silver?',
-    how:'Hold real gold then silver under your chin. <b>Which makes your skin look lit and clear</b> — and which leaves it grey or separate from the metal?',
-    type:'plates',
-    a:{sw:'linear-gradient(135deg,#E7C36B,#B8902F)', label:'Gold', tag:'A', desc:'Gold wins — skin looks warmer, alive', val:+1},
-    b:{sw:'linear-gradient(135deg,#D8DDE2,#9AA1AA)', label:'Silver', tag:'B', desc:'Silver wins — skin looks clean, cool', val:-1},
-    varies:true },
+/* ===== VIBE THEMES (aesthetic only — colors come from each subject's Color Analysis) ===== */
+const THEMES = {
+  clean: {
+    code:"vibe:minimalist", name:"The Minimalist", sub:"clean, tonal, undone-perfect",
+    desc:"Calm and intentional. Every piece earns its place. Pared-back styling, quiet structure, and polish that reads effortless because nothing competes for attention.",
+    keywords:["calm","tonal","intentional","structured","quiet"],
+    motif:"A single hairline rule; lots of breathing room; one restrained accent.",
+    type:"Clean sans headers, generous spacing, lowercase labels.",
+    board:"Airy layout, wide margins, thin frames, no drop shadow — tonal within the subject's palette.",
+    fit:"Relaxed-but-tailored. Note clean lines, easy layers, and where a piece skims vs. clings."
+  },
+  romantic: {
+    code:"vibe:romantic", name:"The Romantic", sub:"soft, vintage, golden-hour",
+    desc:"Tender and a little nostalgic. Soft fabrics, vintage details, gentle drape. Femininity with an old-Hollywood swoon — pretty as the point.",
+    keywords:["feminine","vintage","tender","soft","nostalgic"],
+    motif:"Florals, delicate curves, a pressed-flower or brooch accent.",
+    type:"High-contrast serif headers with italic accents.",
+    board:"Soft rounded corners, gentle drop shadow, delicate dividers — within the subject's palette.",
+    fit:"Flag waistline emphasis, soft drape, and necklines. Note bust room and forgiving stretch."
+  },
+  bold: {
+    code:"vibe:maximalist", name:"The Maximalist", sub:"expressive, playful, turned-up",
+    desc:"Joyful and expressive. Statement pieces, pattern play, fearless mixing. Getting dressed is the fun part — so make it sing (within the cool brand world).",
+    keywords:["vivid","playful","pattern-mixed","fearless","expressive"],
+    motif:"Color-blocked shapes, bold geometry, an oversized graphic accent.",
+    type:"Chunky display headers, confident accent blocks, playful sizing.",
+    board:"Energetic, color-blocked panels and full-bleed swatches — using the subject's saturated picks.",
+    fit:"Note statement silhouettes and proportion play. Call out anchor pieces that ground a bold look."
+  },
+  glam: {
+    code:"vibe:glam", name:"The Glam", sub:"moody, sleek, a little dramatic",
+    desc:"Sharp, confident, a touch theatrical. Sleek lines, rich depth, a metallic edge. Quietly bold — the look that owns the room after dark. (Shelby's lane.)",
+    keywords:["sleek","moody","dramatic","polished","magnetic"],
+    motif:"Metallic foil edge, gem/amethyst accent, deep tonal gradient.",
+    type:"Tight, high-contrast headers with a metallic accent rule.",
+    board:"Deep ground, crisp grid, hard edges, one metallic pop — drawn from the subject's metals.",
+    fit:"Note structure, defined shoulder, and where drama sits (full-makeup-day pieces vs. everyday)."
+  },
+  classic: {
+    code:"vibe:classic", name:"The Classic", sub:"tailored, refined, timeless",
+    desc:"Polished and reliable, never dated. Tailored shapes and investment pieces that look intentional in any decade. Effortless put-together.",
+    keywords:["timeless","tailored","polished","refined","investment"],
+    motif:"Symmetric framing, a fine serif monogram, restrained accent rules.",
+    type:"Refined serif headers, balanced classic sans body.",
+    board:"Symmetric grid, framed photos, quiet accent rules — within the subject's neutrals.",
+    fit:"Note clean tailoring, true-to-size fit, and quality drape. Flag pieces that hold a crisp line."
+  },
+  boho: {
+    code:"vibe:boho", name:"The Free Spirit", sub:"earthy, textured, a little mystical",
+    desc:"Warm, textured, and lived-in. Easy layers, natural fabrics, an organic wander. Comfortable in its own skin, with a celestial/crystal edge. (Brettany's lane.)",
+    keywords:["earthy","textured","organic","layered","mystical"],
+    motif:"Crystals / raw stone, moon + stars, ferns and botanicals, soft Highland texture.",
+    type:"Soft serif or humanist sans, hand-feel spacing.",
+    board:"Layered textures, soft torn edges, woven/botanical accents — within the subject's earth tones.",
+    fit:"Note easy drape, layering range, and forgiving fits. Flag comfort and movement first."
+  }
+};
 
-  { axis:'undertone', w:1.5,
-    prompt:'Bright white, or soft cream?',
-    how:'Drape pure white, then ivory/cream. <b>One looks clean; one looks sallow or muddy.</b> Which is which?',
-    type:'plates',
-    a:{sw:'linear-gradient(135deg,#F6EFD9,#EADFBE)', label:'Cream', tag:'A', desc:'Cream looks fresh, white looks harsh', val:+1},
-    b:{sw:'linear-gradient(135deg,#FFFFFF,#F2F4F6)', label:'Pure white', tag:'B', desc:'White looks clean, cream looks dingy', val:-1} },
+/* ===== PER-PERSON COLORS — sourced from Design Kit (LIVE) / Color Analysis ===== */
+const PERSON_COLORS = {
+  shelby: { label:"Shelby — Cool & Soft glam (Design Kit)", vibe:"glam",
+    colors:[["#4B2E5E","Aubergine"],["#6A2E55","Deep plum"],["#8E6FB0","Purple metallic"],["#1C5D55","Peacock"],["#1E1B22","Onyx"],["#9AA0A6","Pewter"]] },
+  brettany: { label:"Brettany — Warm-neutral earthy boho (Design Kit)", vibe:"boho",
+    colors:[["#9B7A8A","Mauve"],["#A55B3B","Rust"],["#7C8466","Moss/sage"],["#C9B79C","Oatmeal"],["#4A3B33","Espresso"],["#B08D57","Gold/bronze"]] },
+  sam: { label:"Sam — Cool & Clear (Color Analysis)", vibe:null,
+    colors:[["#1F2A44","Soft navy"],["#2B8FA6","Clear teal"],["#7B4DA6","Amethyst"],["#B0247A","Magenta"],["#E36B9E","Clear rose"],["#F1F3F6","Cool off-white"]] }
+};
+/* fallback when the subject isn't a known person */
+const BRAND_COLORS = [["#24507A","Marine"],["#8FAFEF","Periwinkle"],["#8B7CFF","Neon violet"],["#59CBE8","Cool cyan"],["#D7EAF7","Glacial"],["#2D4059","Navy graphite"]];
 
-  { axis:'undertone', w:2,
-    prompt:'Warm peach, or cool rose?',
-    how:'The decisive one. Drape a peach/coral, then a cool rose/pink. <b>Which calms your skin, and which makes any redness flare?</b>',
-    type:'plates',
-    a:{sw:'linear-gradient(135deg,#F4A977,#EC7E54)', label:'Peach / coral', tag:'A', desc:'Peach calms me, rose looks flat', val:+1},
-    b:{sw:'linear-gradient(135deg,#E6A6BC,#D27E9C)', label:'Cool rose', tag:'B', desc:'Rose calms me, peach reddens me', val:-1} },
-
-  { axis:'undertone', w:0.5,
-    prompt:'Your wrist veins, in daylight?',
-    how:'A tiebreaker, not gospel — many people read in-between, which is itself a clue you sit neutral.',
-    type:'opts',
-    options:[
-      {dot:'#7FA05A', txt:'Distinctly green', sub:'leans warm', val:+1},
-      {dot:'#6E7FC0', txt:'Distinctly blue / purple', sub:'leans cool', val:-1},
-      {dot:'#9098A0', txt:'Honestly can\'t tell', sub:'neutral signal', val:0}
-    ] },
-
-  { axis:'depth', w:2,
-    prompt:'Bare-faced — pale shade, or deep shade?',
-    how:'Drape a very light pastel, then a deep dark shade. <b>Which sits in harmony, and which overwhelms your face?</b>',
-    type:'plates',
-    a:{sw:'linear-gradient(135deg,#E9E4F2,#CFC6E4)', label:'Pale', tag:'A', desc:'The pale one harmonizes; dark engulfs me', val:-1},
-    b:{sw:'linear-gradient(135deg,#2A2E40,#15182a)', label:'Deep', tag:'B', desc:'The deep one anchors me; pale washes me out', val:+1} },
-
-  { axis:'depth', w:1.5,
-    prompt:'Your natural coloring overall?',
-    how:'Hair, brows and skin together, no makeup. Where does the whole picture land?',
-    type:'opts',
-    options:[
-      {dot:'#E6DCC6', txt:'Light — fair skin, light hair/brows', sub:'low natural depth', val:-2},
-      {dot:'#A98E6B', txt:'Medium — some natural depth', sub:'mid', val:0},
-      {dot:'#42352a', txt:'Deep — dark hair and/or rich skin', sub:'high natural depth', val:+2}
-    ] },
-
-  { axis:'clarity', w:2,
-    prompt:'Clean and bright, or the same shade muted?',
-    how:'Compare a clear, clean color against a greyed-down version of it. <b>One lights your face; one flattens it.</b>',
-    type:'plates',
-    a:{sw:'linear-gradient(135deg,#1FA6C2,#1577C0)', label:'Clear / bright', tag:'A', desc:'The clean version lifts me', val:-1},
-    b:{sw:'linear-gradient(135deg,#7E97A0,#5E7178)', label:'Muted / greyed', tag:'B', desc:'The softer, hazier version suits me better', val:+1} },
-
-  { axis:'clarity', w:1.5,
-    prompt:'Greyed earthy neutrals — friend or foe?',
-    how:'Think olive, taupe, dusty grey near your face. Do they flatter you, or drain you?',
-    type:'opts',
-    options:[
-      {dot:'#8C8A6E', txt:'They flatter me', sub:'you lean soft / muted', val:+1.5},
-      {dot:'#9A9CA3', txt:'They drain me — I need clean color', sub:'you lean clear', val:-1.5},
-      {dot:'#B7B4Ac', txt:'Neutral / no effect', sub:'mid', val:0}
-    ] },
-
-  { axis:'contrast', w:2,
-    prompt:'Bare-faced: stark contrast, or soft blend?',
-    how:'Picture a sharp black-and-white pairing versus a gentle tonal blend, with <b>no makeup on</b>. Which suits the bare face?',
-    type:'plates',
-    a:{sw:'linear-gradient(90deg,#15161b 0 50%,#F4F5F7 50% 100%)', label:'High contrast', tag:'A', desc:'Sharp dark-vs-light suits me bare-faced', val:+1},
-    b:{sw:'linear-gradient(135deg,#C9CBD8,#9FA6BE)', label:'Soft / tonal', tag:'B', desc:'Close, blended tones suit me better', val:-1} },
-
-  { axis:'stability', w:1,
-    prompt:'Does that change with full makeup?',
-    how:'The dial. When you add defined brows and a bold lip, can you suddenly carry far more contrast and drama than your bare face wants?',
-    type:'opts',
-    options:[
-      {dot:'#6E5BD8', txt:'Yes — makeup lets me go much bolder', sub:'adjustable contrast (a dial)', val:1},
-      {dot:'#9A9CA3', txt:'No — about the same either way', sub:'fixed contrast', val:0}
-    ] }
+/* ===== MUSES (visual tiles; cool/brand-leaning illustrations) ===== */
+const MUSES = [
+  { key:"clean", name:"The Minimalist", desc:"Quiet, tonal, undone-perfect",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#F4F9FC"/><rect x="14" y="14" width="2" height="50" fill="#5d7088"/><rect x="26" y="22" width="34" height="42" fill="#D7EAF7"/><circle cx="92" cy="30" r="12" fill="#98D8E8"/><rect x="80" y="54" width="26" height="2" fill="#2D4059"/></svg>` },
+  { key:"romantic", name:"The Romantic", desc:"Soft, vintage, golden-hour",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#FBFAFF"/><path d="M10 78 Q60 6 110 78" fill="#E6E2FF"/><g fill="#8FAFEF"><circle cx="60" cy="30" r="7"/><circle cx="50" cy="34" r="6"/><circle cx="70" cy="34" r="6"/><circle cx="55" cy="42" r="6"/><circle cx="65" cy="42" r="6"/></g><circle cx="60" cy="37" r="4" fill="#8B7CFF"/></svg>` },
+  { key:"bold", name:"The Maximalist", desc:"Bright, playful, turned-up",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#F4F9FC"/><circle cx="40" cy="36" r="24" fill="#8B7CFF"/><circle cx="78" cy="44" r="20" fill="#42E8E0"/><polygon points="60,8 84,8 72,30" fill="#24507A"/><circle cx="92" cy="22" r="10" fill="#59CBE8"/></svg>` },
+  { key:"glam", name:"The Glam", desc:"Moody, sleek, dramatic",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#1E1B22"/><polygon points="20,64 64,12 80,12 36,64" fill="#4B2E5E"/><rect x="70" y="20" width="30" height="40" fill="#6A2E55"/><circle cx="98" cy="16" r="6" fill="#8E6FB0"/></svg>` },
+  { key:"classic", name:"The Classic", desc:"Tailored, refined, timeless",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#F4F9FC"/><rect x="16" y="14" width="22" height="50" fill="#24507A"/><rect x="44" y="14" width="22" height="50" fill="#8FAFEF"/><rect x="72" y="14" width="22" height="50" fill="#2D4059"/><rect x="100" y="30" width="10" height="18" fill="#59CBE8"/></svg>` },
+  { key:"boho", name:"The Free Spirit", desc:"Earthy, textured, mystical",
+    svg:`<svg viewBox="0 0 120 78"><rect width="120" height="78" fill="#EFE7D6"/><circle cx="60" cy="30" r="18" fill="#C9B79C"/><path d="M30 70 Q45 40 60 70" fill="#7C8466"/><path d="M60 70 Q75 40 90 70" fill="#A55B3B"/><g fill="#9B7A8A"><circle cx="22" cy="20" r="3"/><circle cx="100" cy="24" r="3"/><circle cx="92" cy="58" r="3"/></g></svg>` }
 ];
 
-/* ---------------- state ---------------- */
-let idx=0;
-const ans=new Array(Q.length).fill(null);
+/* ===== QUESTIONS (13) ===== */
+const QUESTIONS = [
+  { q:"First thing you reach for on an ordinary day?", opts:[
+    {t:"A crisp tee and tailored trousers", s:["clean","classic"]},
+    {t:"A flowy dress", s:["romantic","boho"]},
+    {t:"Something bright you can't miss", s:["bold"]},
+    {t:"Sleek lines, deep tones", s:["glam"]},
+  ]},
+  { q:"Pick a vibe you'd live in:", opts:[
+    {t:"Soft neutrals, tonal and quiet", s:["clean"]},
+    {t:"Pretty, soft and a little vintage", s:["romantic"]},
+    {t:"Saturated, playful, turned-up", s:["bold"]},
+    {t:"Moody, sleek, metallic edge", s:["glam"]},
+    {t:"Polished, tailored, timeless", s:["classic"]},
+    {t:"Earthy, layered, a little mystical", s:["boho"]},
+  ]},
+  { q:"Your dream fabric to touch:", opts:[
+    {t:"Structured cotton & fine knit", s:["clean","classic"]},
+    {t:"Silk, lace & chiffon", s:["romantic"]},
+    {t:"Satin & anything with shine", s:["bold","glam"]},
+    {t:"Liquid metallics & sleek leather", s:["glam"]},
+    {t:"Linen, suede & raw weave", s:["boho"]},
+  ]},
+  { q:"The accessory that finishes the look:", opts:[
+    {t:"Barely there — one fine piece", s:["clean"]},
+    {t:"Pearls or a vintage piece", s:["romantic","classic"]},
+    {t:"The biggest, brightest statement", s:["bold"]},
+    {t:"Sleek metal & a gem accent", s:["glam"]},
+    {t:"Stacked rings, stones & a woven bag", s:["boho"]},
+  ]},
+  { q:"Your jewelry instinct:", opts:[
+    {t:"Fine, minimal — barely there", s:["clean"]},
+    {t:"Dainty & pretty", s:["romantic"]},
+    {t:"Bold color & shine", s:["bold"]},
+    {t:"Metallic, gem-set, a little dramatic", s:["glam"]},
+    {t:"A polished classic — a good watch", s:["classic"]},
+    {t:"Mixed metals, beads & stone", s:["boho"]},
+  ]},
+  { q:"Pick a print:", opts:[
+    {t:"No print — just texture", s:["clean"]},
+    {t:"Soft florals", s:["romantic"]},
+    {t:"Bold geometric / color block", s:["bold"]},
+    {t:"Tonal, sleek, high-shine", s:["glam"]},
+    {t:"Stripe or check", s:["classic"]},
+    {t:"Botanical / earthy abstract", s:["boho"]},
+  ]},
+  { q:"Ideal silhouette:", opts:[
+    {t:"Clean & relaxed", s:["clean"]},
+    {t:"Soft & flowing", s:["romantic","boho"]},
+    {t:"Statement & sculptural", s:["bold"]},
+    {t:"Fitted & sleek", s:["glam"]},
+    {t:"Tailored & structured", s:["classic"]},
+  ]},
+  { q:"Which energy is more you?", opts:[
+    {t:"Soft & rounded — gentle and pretty", s:["romantic","boho"]},
+    {t:"Sharp & sleek — strong lines", s:["glam","classic"]},
+    {t:"Pared-back & balanced — neither extreme", s:["clean"]},
+    {t:"Big & expressive — turn it up", s:["bold"]},
+  ]},
+  { q:"What do you most want your clothes to do?", opts:[
+    {t:"Get out of the way so I'm the focus", s:["clean"]},
+    {t:"Make me feel pretty and soft", s:["romantic"]},
+    {t:"Turn heads and start conversations", s:["bold"]},
+    {t:"Give me a little drama and edge", s:["glam"]},
+    {t:"Make me look pulled-together, always", s:["classic"]},
+    {t:"Feel like home — easy and me", s:["boho"]},
+  ]},
+  { q:"Where do you feel most yourself?", opts:[
+    {t:"A quiet gallery or minimalist café", s:["clean"]},
+    {t:"A garden party at golden hour", s:["romantic"]},
+    {t:"A festival or gallery opening", s:["bold"]},
+    {t:"The city after dark", s:["glam"]},
+    {t:"A long lunch somewhere refined", s:["classic"]},
+    {t:"A beach bonfire or open-air market", s:["boho"]},
+  ]},
+  { q:"Getting dressed feels best when it's:", opts:[
+    {t:"Effortless and uncomplicated", s:["clean"]},
+    {t:"Pretty and a little nostalgic", s:["romantic"]},
+    {t:"Fun and expressive", s:["bold"]},
+    {t:"Confident and a bit dramatic", s:["glam"]},
+    {t:"Put-together and reliable", s:["classic"]},
+    {t:"Easy, warm and lived-in", s:["boho"]},
+  ]},
+  { q:"Shoe of choice:", opts:[
+    {t:"Clean sneakers / loafers", s:["clean"]},
+    {t:"Delicate heels / ballet flats", s:["romantic"]},
+    {t:"A bold statement shoe", s:["bold"]},
+    {t:"Sleek heeled boot", s:["glam"]},
+    {t:"Classic pumps / leather boots", s:["classic"]},
+    {t:"Suede sandals / ankle boots", s:["boho"]},
+  ]},
+  { q:"The compliment you'd love most:", opts:[
+    {t:"“You always look so calm and put-together”", s:["clean"]},
+    {t:"“You look so soft and pretty”", s:["romantic"]},
+    {t:"“Your outfits are so much fun”", s:["bold"]},
+    {t:"“You look stunning / so striking”", s:["glam"]},
+    {t:"“You always look so classic”", s:["classic"]},
+    {t:"“Your style feels so you”", s:["boho"]},
+  ]},
+];
 
-const $=id=>document.getElementById(id);
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo({top:0,behavior:'instant'});}
+/* ===== STATE ===== */
+let subject = "";
+let subjectKey = null;
+let idx = 0;
+let answers = [];
+let museKey = null;
+const MUSE_WEIGHT = 2;
 
-function start(){idx=0;renderPips();renderQ();show('s-quiz');}
-function restart(){ans.fill(null);start();}
-
-function renderPips(){
-  const p=$('pips');p.innerHTML='';
-  Q.forEach((_,i)=>{const d=document.createElement('div');d.className='pip'+(i<idx?' done':i===idx?' cur':'');p.appendChild(d);});
+function goMuse(){
+  const v = document.getElementById('subject').value.trim();
+  subject = v || "Subject";
+  subjectKey = PERSON_COLORS[subject.toLowerCase()] ? subject.toLowerCase() : null;
+  museKey = null;
+  document.getElementById('museName').textContent = subject;
+  document.getElementById('museSubj').textContent = subject === "Subject" ? "you" : subject;
+  renderMuses();
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('muse').classList.remove('hidden');
 }
 
-function renderQ(){
-  renderPips();
-  $('qcount').textContent=`Q ${idx+1} / ${Q.length}`;
-  $('backBtn').style.visibility=idx===0?'hidden':'visible';
-  const q=Q[idx];
-  const axisName={undertone:'01 · Undertone',depth:'02 · Depth',clarity:'03 · Clarity',contrast:'04 · Contrast',stability:'04 · Contrast — the dial'}[q.axis];
-  let html=`<div class="qaxis">${axisName}</div><h2 class="qprompt">${q.prompt}</h2><p class="qhow">${q.how}</p>`;
-
-  if(q.type==='plates'){
-    html+=`<div class="plates">
-      ${plate(q.a,'a')}
-      ${plate(q.b,'b')}
-    </div>`;
-    if(q.varies){html+=`<div class="varies"><button id="vbtn" onclick="pick('v')">No difference — they look the same on me</button></div>`;}
-  } else {
-    html+=`<div class="opts3">`;
-    q.options.forEach((o,i)=>{
-      html+=`<div class="opt-row" role="button" tabindex="0" data-i="${i}" onclick="pickOpt(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickOpt(${i})}">
-        <span class="opt-dot" style="background:${o.dot}"></span>
-        <span><div class="otxt">${o.txt}</div><div class="osub">${o.sub}</div></span>
-      </div>`;
-    });
-    html+=`</div>`;
-  }
-  $('qbody').innerHTML=html;
-  reflectSelection();
+function renderMuses(){
+  const g = document.getElementById('museGrid');
+  g.innerHTML = "";
+  MUSES.forEach(m=>{
+    const b = document.createElement('button');
+    b.className = "muse" + (museKey===m.key ? " sel":"");
+    b.innerHTML = `${m.svg}<p class="mn">${m.name}</p><p class="md">${m.desc}</p>`;
+    b.onclick = ()=>{ museKey=m.key; renderMuses(); document.getElementById('museNext').disabled=false; };
+    g.appendChild(b);
+  });
 }
 
-function plate(o,key){
-  return `<button class="plate" data-k="${key}" onclick="pick('${key}')">
-    <div class="swatch" style="background:${o.sw}"><span class="splabel">${o.label}</span></div>
-    <div class="body"><div class="tag">${o.tag}</div><div class="desc">${o.desc}</div></div>
-  </button>`;
+function backToStart(){
+  document.getElementById('muse').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
 }
 
-function reflectSelection(){
-  const cur=ans[idx];
-  document.querySelectorAll('#qbody .plate').forEach(p=>p.classList.toggle('sel',cur&&cur.key===p.dataset.k));
-  document.querySelectorAll('#qbody .opt-row').forEach(r=>r.classList.toggle('sel',cur&&cur.optI===+r.dataset.i));
-  const vb=$('vbtn'); if(vb) vb.classList.toggle('sel',cur&&cur.key==='v');
+function startQuiz(){
+  if(!museKey) return;
+  idx = 0; answers = [];
+  document.getElementById('muse').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  render();
 }
 
-function pick(key){
-  const q=Q[idx];
-  let val=0,decisive=true;
-  if(key==='a')val=q.a.val; else if(key==='b')val=q.b.val; else {val=0;decisive=false;}
-  ans[idx]={axis:q.axis,w:q.w,val:val*q.w,decisive,key};
-  reflectSelection();
-  setTimeout(next,230);
-}
-function pickOpt(i){
-  const q=Q[idx],o=q.options[i];
-  const decisive=o.val!==0;
-  ans[idx]={axis:q.axis,w:q.w,val:o.val*q.w,decisive,optI:i,raw:o.val};
-  reflectSelection();
-  setTimeout(next,230);
+function render(){
+  const Q = QUESTIONS[idx];
+  document.getElementById('progLabel').textContent = `Q${idx+1} / ${QUESTIONS.length}`;
+  document.getElementById('progName').textContent = subject;
+  document.getElementById('barFill').style.width = (7 + (idx/QUESTIONS.length*93))+"%";
+  document.getElementById('qN').textContent = `Question ${idx+1}`;
+  document.getElementById('qText').textContent = Q.q;
+
+  const wrap = document.getElementById('opts');
+  wrap.innerHTML = "";
+  const letters = "ABCDEF";
+  Q.opts.forEach((o,i)=>{
+    const b = document.createElement('button');
+    b.className = "opt";
+    b.innerHTML = `<span class="tag">${letters[i]}</span>${o.t}`;
+    b.onclick = ()=>choose(o.s);
+    wrap.appendChild(b);
+  });
 }
 
-function next(){ if(idx<Q.length-1){idx++;renderQ();} else finish(); }
-function back(){ if(idx>0){idx--;renderQ();} }
+function choose(themeKeys){
+  answers[idx] = themeKeys;
+  idx++;
+  if(idx >= QUESTIONS.length){ finish(); }
+  else { render(); }
+}
 
-/* ---------------- scoring ---------------- */
+function back(){
+  if(idx>0){ idx--; render(); }
+  else { document.getElementById('quiz').classList.add('hidden'); document.getElementById('muse').classList.remove('hidden'); }
+}
+
 function finish(){
-  const acc={undertone:0,depth:0,clarity:0,contrast:0};
-  const wsum={undertone:0,depth:0,clarity:0,contrast:0};
-  const decis={undertone:[0,0],depth:[0,0],clarity:[0,0],contrast:[0,0]};
-  let dial=false;
-  ans.forEach((a,i)=>{
-    if(!a)return;
-    if(a.axis==='stability'){ if(a.raw===1||(Q[i].options&&a.optI===0)) dial=true; return; }
-    acc[a.axis]+=a.val;
-    wsum[a.axis]+=Q[i].w;
-    decis[a.axis][1]++; if(a.decisive)decis[a.axis][0]++;
+  const scores = {};
+  for(const k in THEMES) scores[k]=0;
+  if(museKey) scores[museKey] += MUSE_WEIGHT;
+  answers.forEach(keys => keys.forEach(k => scores[k] += (1/keys.length)));
+
+  const ranked = Object.keys(THEMES).sort((a,b)=>{
+    if(scores[b]!==scores[a]) return scores[b]-scores[a];
+    return Object.keys(THEMES).indexOf(a)-Object.keys(THEMES).indexOf(b);
   });
-  // normalize each axis to -100..100
-  const norm={};
-  for(const k in acc){ norm[k]= wsum[k]? Math.max(-100,Math.min(100, Math.round((acc[k]/wsum[k])*100))) : 0; }
-  const conf={};
-  for(const k in decis){ conf[k]= decis[k][1]? Math.round(100*decis[k][0]/decis[k][1]) : 0; }
+  const primary = THEMES[ranked[0]];
+  const secondary = THEMES[ranked[1]];
+  const total = Object.values(scores).reduce((a,b)=>a+b,0);
 
-  renderResult(norm,conf,dial);
-  show('s-result');
-}
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
 
-function label(axis,v){
-  const strong=Math.abs(v)>=55, mild=Math.abs(v)>=20;
-  const word=(neg,pos,neu)=> v<0 ? (strong?'Strongly ':mild?'':'Leans ')+neg : v>0 ? (strong?'Strongly ':mild?'':'Leans ')+pos : neu;
-  if(axis==='undertone')return word('cool','warm','Neutral');
-  if(axis==='depth')return word('light','deep','Medium');
-  if(axis==='clarity')return word('clear','soft','Balanced');
-  if(axis==='contrast')return word('low-contrast','high-contrast','Medium');
-}
+  document.getElementById('rCode').textContent = `${subject.toLowerCase()} // ${primary.code} ✓`;
+  document.getElementById('rName').textContent = primary.name;
+  document.getElementById('rSub').textContent = primary.sub;
+  document.getElementById('rDesc').textContent = primary.desc;
 
-function renderResult(n,c,dial){
-  // headline profile sentence
-  const temp = n.undertone<0?'cool':n.undertone>0?'warm':'neutral';
-  const clar = n.clarity<0?'clear':n.clarity>0?'soft':'balanced';
-  const depthW = n.depth<0?'light':n.depth>0?'deep':'medium';
-  const contrastW = dial ? 'adjustable contrast' : (n.contrast>0?'high contrast':n.contrast<0?'low contrast':'medium contrast');
-  $('verdict').innerHTML=`<em>${cap(temp)}</em> &amp; <em>${clar}</em>,<br>${depthW} with ${contrastW}.`;
-  $('rsum').textContent=`Your two most stable dials are undertone (${temp}) and clarity (${clar}). ${dial?'Your contrast is a dial you set with makeup — which is why a single fixed season never quite fits.':'Your contrast reads fairly fixed.'}`;
-
-  const meterDefs=[
-    {axis:'undertone',l:'Cool',r:'Warm'},
-    {axis:'depth',l:'Light',r:'Deep'},
-    {axis:'clarity',l:'Clear',r:'Soft / muted'},
-    {axis:'contrast',l:'Low contrast',r:'High contrast'}
-  ];
-  const grad={
-    undertone:'linear-gradient(90deg,#3E78C8,#8a93a0,#D98A3D)',
-    depth:'linear-gradient(90deg,#E9E4F2,#7d7f96,#15182a)',
-    clarity:'linear-gradient(90deg,#1FA6C2,#7E97A0,#5E7178)',
-    contrast:'linear-gradient(90deg,#C9CBD8,#6E5BD8,#15161b)'
-  };
-  let m='';
-  meterDefs.forEach(d=>{
-    const v=n[d.axis], pos=(v+100)/2; // 0..100
-    const flag = (d.axis==='contrast'&&dial)?'<span class="flag">⟲ adjustable</span>': (c[d.axis]<60?'<span class="flag">⚑ low confidence</span>':'');
-    m+=`<div class="meter">
-      <h4><span>${cap(d.axis)} — ${label(d.axis,v)}</span>${flag}</h4>
-      <div class="scale"><div class="fill" style="background:${grad[d.axis]}"></div><div class="needle" style="left:calc(${pos}% - 1.5px)"></div></div>
-      <div class="ends"><span>${d.l}</span><span>${d.r}</span></div>
-      <div class="conf">confidence ${c[d.axis]}%${d.axis==='contrast'&&dial?' · contrast measured bare-faced; rises with makeup':''}</div>
-    </div>`;
+  // palette — sourced from the subject's Color Analysis, never invented
+  const pc = subjectKey ? PERSON_COLORS[subjectKey] : null;
+  const colors = pc ? pc.colors : BRAND_COLORS;
+  document.getElementById('rPalNote').textContent = pc
+    ? `Palette: ${pc.label} — colors stay locked to ${subject}'s analysis; the vibe above sets how they're styled.`
+    : `Palette shown is the Closet Coder brand default. For a real subject, pull their locked colors from their Color Analysis — this quiz sets the vibe, not the palette.`;
+  const sw = document.getElementById('rSwatches'); sw.innerHTML="";
+  colors.forEach(([hex,nm])=>{
+    const d=document.createElement('div'); d.className="sw";
+    d.innerHTML=`<div class="chip" style="background:${hex}"></div><div class="meta"><b>${nm}</b>${hex}</div>`;
+    sw.appendChild(d);
   });
-  $('meters').innerHTML=m;
 
-  // season translation
-  const {text,nofit,profile}=translate(n,dial,temp,clar,depthW);
-  $('seasonText').innerHTML=text;
-  $('nofitText').innerHTML=nofit;
-  window.__profile=profile;
-}
+  const kw=document.getElementById('rKw'); kw.innerHTML="";
+  primary.keywords.forEach(w=>{const s=document.createElement('span');s.textContent=w;kw.appendChild(s);});
 
-function translate(n,dial,temp,clar,depthW){
-  const cool=n.undertone<0, warm=n.undertone>0;
-  const clear=n.clarity<0, soft=n.clarity>0;
-  const light=n.depth<0, deep=n.depth>0;
-  let nearest=[], why='';
+  document.getElementById('rMotif').textContent = primary.motif;
+  document.getElementById('rType').textContent  = primary.type;
+  document.getElementById('rBoard').textContent = primary.board;
+  document.getElementById('rFit').textContent   = primary.fit;
+  document.getElementById('rBlend').innerHTML =
+    `<b>${secondary.name}</b> — pull from this when ${subject} wants a shift without losing the through-line.`;
 
-  if(cool&&clear&&light){
-    nearest = dial ? ['Bright / Cool Winter <span style="color:var(--ink-dim)">(full-makeup days)</span>','Light Summer minus the muted <span style="color:var(--ink-dim)">(natural days)</span>']
-                   : ['Light Summer','Bright Winter'];
-    why='Cool + clear is the spine of your palette. Your light, low-contrast features point toward <b>Summer</b>, but your love of clean, saturated color points toward <b>Winter</b> — the two seasons disagree only on the contrast axis, which for you is a dial.';
-  } else if(cool&&clear&&deep){
-    nearest=['Cool / True Winter','Bright Winter'];
-    why='Cool, clear and deep is the classic Winter signature — jewel tones, true reds, crisp contrast.';
-  } else if(cool&&soft){
-    nearest=['Light Summer','Soft Summer'];
-    why='Cool and muted is Summer territory — soft, hazy, blue-based tones over anything stark.';
-  } else if(warm&&clear&&light){
-    nearest=['Light Spring','Bright / Clear Spring'];
-    why='Warm and clear with light features is Spring — fresh, warm, clean color.';
-  } else if(warm&&soft){
-    nearest=['Soft Autumn','Warm Autumn'];
-    why='Warm and muted is Autumn — earthy, rich, golden tones.';
-  } else if(warm&&clear&&deep){
-    nearest=['True / Warm Autumn','Deep Autumn'];
-    why='Warm, clear and deep leans Deep/Warm Autumn.';
-  } else {
-    nearest=['You sit between seasons'];
-    why='Your dials land near the middle on undertone or clarity, so no single season dominates.';
-  }
-
-  const text = `${why}<br><br><b>Nearest label${nearest.length>1?'s':''}:</b> ${nearest.join(' · ')}`;
-  const nofit = dial
-    ? 'Where you escape the system: every season assumes your contrast is a fixed fact. Yours isn\'t — you build it with makeup — so treat the label as a setting, not an identity.'
-    : 'Where the system can still mislead: it bundles four dials into one word, so if any single dial above reads "low confidence," re-test it with real fabric before trusting the season.';
-
-  const profile = `MY COLOR PROFILE (axis-based)
-• Undertone: ${cap(temp)} (${n.undertone})
-• Depth: ${cap(depthW)} (${n.depth})
-• Clarity: ${clear?'Clear':soft?'Soft/muted':'Balanced'} (${n.clarity})
-• Contrast: ${dial?'Adjustable — a dial set by makeup (bold on full-makeup days, soft on bare days)':(n.contrast>0?'High':n.contrast<0?'Low':'Medium')} (${n.contrast})
-Nearest season(s): ${nearest.join(' / ').replace(/<[^>]+>/g,'')}
-Rule of thumb: ${temp} over its opposite; ${clear?'clear over muted':soft?'soft over stark':'balanced'}; match clothing contrast to makeup.`;
-  return {text,nofit,profile};
-}
-
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
-
-function copyResult(){
-  const txt=window.__profile||'';
-  navigator.clipboard?.writeText(txt).then(()=>{
-    $('copynote').style.display='block';
-    setTimeout(()=>$('copynote').style.display='none',4000);
+  const mix=document.getElementById('rMix'); mix.innerHTML="";
+  ranked.slice(0,3).forEach(k=>{
+    const pct = total ? Math.round(scores[k]/total*100) : 0;
+    const row=document.createElement('div'); row.className="mixrow";
+    row.innerHTML=`<span class="nm">${THEMES[k].name}</span><span class="mixbar"><i style="width:${pct}%"></i></span><span>${pct}%</span>`;
+    mix.appendChild(row);
   });
+
+  const museName = museKey ? (MUSES.find(m=>m.key===museKey)||{}).name : "—";
+  const palLine = (pc ? pc.colors : BRAND_COLORS).map(c=>c[0]).join("  ");
+  const palSrc  = pc ? pc.label : "Closet Coder brand default — replace with subject's Color Analysis";
+  const token =
+`THEME TOKEN
+subject:    ${subject}
+muse:       ${museName}
+vibe:       ${primary.name}  (${primary.code})
+secondary:  ${secondary.name}
+mood:       ${primary.keywords.join(", ")}
+motif:      ${primary.motif}
+type:       ${primary.type}
+layout:     ${primary.board}
+fit-guides: ${primary.fit}
+palette:    ${palLine}
+palette-src:${palSrc}
+mix:        ${ranked.slice(0,3).map(k=>THEMES[k].name+" "+(total?Math.round(scores[k]/total*100):0)+"%").join(" / ")}
+compiled:   ${new Date().toISOString().slice(0,10)}`;
+  document.getElementById('rToken').textContent = token;
+
+  window.scrollTo({top:0,behavior:"smooth"});
 }
+
+function copyToken(){
+  const t = document.getElementById('rToken').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=document.getElementById('copyBtn'); b.textContent="copied ✓";
+    setTimeout(()=>b.textContent="copy",1600);
+  }).catch(()=>{ document.getElementById('copyBtn').textContent="select & copy"; });
+}
+
+function restart(){
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+  document.getElementById('subject').value="";
+  document.getElementById('barFill').style.width="0%";
+  museKey=null; subjectKey=null;
+}
+
+document.getElementById('subject').addEventListener('keydown',e=>{ if(e.key==='Enter') goMuse(); });
 </script>
 </body>
 </html>

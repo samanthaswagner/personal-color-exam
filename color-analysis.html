@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Closet Coder // Color Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    /* Aurora-inspired galaxy theme (palette is a guide, not a hard rule) */
+    --bg:#05060f; --panel:#0e1426; --panel-2:#151c33; --line:#283358;
+    --text:#f4f9fc; --muted:#c4d1ec;
+    --green:#42e8e0;   /* electric aqua — success / energy (kept) */
+    --amber:#59cbe8;   /* cool cyan */
+    --pink:#8b7cff;    /* violet — used sparingly */
+    --accent:#98d8e8;  /* aqua mist — primary accent */
+    --cyan:#59cbe8; --aqua:#42e8e0; --violet:#8b7cff; --periwinkle:#8fafef; --marine:#24507a;
+    --ink:#04101a;     /* dark text on light-aqua buttons */
+    --radius:14px;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --serif:"Poppins","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --head:"Poppins","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 620px at 84% -14%, rgba(66,232,224,.13) 0%, transparent 58%),
+      radial-gradient(1000px 560px at -10% 114%, rgba(108,123,255,.15) 0%, transparent 56%),
+      radial-gradient(860px 600px at 50% 44%, rgba(89,203,232,.05) 0%, transparent 72%),
+      radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.75), transparent 100%),
+      radial-gradient(2px 2px at 27% 64%, rgba(255,255,255,.45), transparent 100%),
+      radial-gradient(1.5px 1.5px at 46% 16%, rgba(200,225,255,.6), transparent 100%),
+      radial-gradient(2px 2px at 63% 74%, rgba(255,255,255,.5), transparent 100%),
+      radial-gradient(1.5px 1.5px at 78% 34%, rgba(255,255,255,.65), transparent 100%),
+      radial-gradient(2px 2px at 90% 58%, rgba(190,210,255,.4), transparent 100%),
+      radial-gradient(1.5px 1.5px at 34% 90%, rgba(255,255,255,.5), transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 10%, rgba(255,255,255,.45), transparent 100%),
+      radial-gradient(1.5px 1.5px at 6% 78%, rgba(255,255,255,.4), transparent 100%),
+      var(--bg);
+    background-attachment:fixed;
+    color:var(--text); font-family:var(--sans); min-height:100vh;
+    display:flex; align-items:flex-start; justify-content:center;
+    padding:32px 18px 72px; -webkit-font-smoothing:antialiased;
+  }
+  .shell{ width:100%; max-width:760px; }
+  .window{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; box-shadow:0 30px 80px -30px rgba(0,0,0,.7); }
+  .titlebar{ display:flex;align-items:center;gap:8px; padding:11px 14px;
+    background:linear-gradient(180deg,#1b1f2b,#13161f); border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;color:var(--muted); }
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+  .dot.r{background:#ff5f57;} .dot.y{background:#febc2e;} .dot.g{background:#28c840;}
+  .titlebar .path{margin-left:8px;}
+  .body{padding:30px 30px 34px;}
+  @media(max-width:560px){.body{padding:22px 18px 26px;}}
+
+  .prompt{font-family:var(--sans);font-weight:500;color:var(--text);font-size:14px;letter-spacing:.01em;margin:0 0 6px;}
+  .prompt .g{color:var(--green);font-weight:600;}
+  .prompt .cur{display:inline-block;width:8px;height:15px;background:var(--green);
+    margin-left:3px;vertical-align:-2px;animation:blink 1.1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  h1{ font-family:var(--head); font-weight:700; font-size:44px; line-height:1.04; letter-spacing:.2px; margin:6px 0 14px; }
+  h1 .aurora{
+    background:linear-gradient(100deg,#59CBE8 0%,#42E8E0 28%,#8FAFEF 62%,#8B7CFF 100%);
+    background-size:220% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shimmer 7s linear infinite;
+  }
+  @keyframes shimmer{ to{ background-position:220% center; } }
+  /* rainbow paint-splash title */
+  h1.hero{margin:6px 0 14px;}
+  .catitle{width:100%;max-width:540px;height:auto;display:block;overflow:visible;}
+  .catitle text{font-family:var(--head);font-weight:700;font-size:58px;letter-spacing:.2px;}
+  #dropsG circle{filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));}
+  /* paint-chip strip under the title */
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 20px;}
+  .chips i{width:30px;height:30px;border-radius:8px;display:block;border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 3px 12px -3px rgba(0,0,0,.6);}
+  @media(max-width:560px){.chips i{width:25px;height:25px;}}
+  .lede{color:var(--muted);font-size:16px;line-height:1.55;margin:0 0 22px;max-width:58ch;}
+
+  .steps{display:grid;gap:10px;margin:0 0 26px;}
+  .step{display:flex;gap:13px;align-items:flex-start;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:11px;padding:13px 15px;}
+  .step .num{font-family:var(--mono);font-size:12px;color:#1a160e;background:var(--accent);
+    min-width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .step h4{margin:0 0 3px;font-family:var(--serif);font-size:17px;}
+  .step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.45;}
+
+  label.field{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+  input[type=text],input[type=email],textarea,select{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    font-size:16px;font-family:var(--sans);padding:13px 14px;border-radius:10px;outline:none;}
+  textarea{min-height:74px;resize:vertical;line-height:1.5;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+
+  .btn{ display:inline-flex;align-items:center;gap:9px;
+    background:linear-gradient(120deg,var(--cyan),var(--aqua));color:var(--ink);border:none;
+    font-family:var(--sans);font-weight:700;font-size:14px;letter-spacing:.02em;
+    padding:13px 20px;border-radius:10px;cursor:pointer; transition:transform .08s ease, filter .15s ease;}
+  .btn:hover{filter:brightness(1.06);}
+  .btn:active{transform:translateY(1px);}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+
+  .stagetag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 10px;display:flex;gap:8px;align-items:center;}
+  .stagetag .mdot{width:7px;height:7px;border-radius:50%;background:var(--line);display:inline-block;}
+  .stagetag .mdot.on{background:var(--accent);}
+  .progress{display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:14px;}
+  .bar{height:6px;background:var(--panel-2);border-radius:999px;overflow:hidden;margin-bottom:24px;}
+  .bar > i{display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--cyan),var(--aqua));transition:width .35s ease;}
+
+  .q{font-family:var(--serif);font-size:25px;line-height:1.25;margin:0 0 8px;}
+  .q .n{font-family:var(--mono);font-size:13px;color:var(--accent);display:block;
+    letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+  .qhint{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0 0 20px;font-style:italic;}
+
+  .opts{display:grid;gap:10px;}
+  .opt{ text-align:left;width:100%; background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    padding:15px 16px;border-radius:11px;cursor:pointer;font-size:15.5px;line-height:1.4;
+    transition:border-color .12s ease, background .12s ease, transform .06s ease;}
+  .opt:hover{border-color:var(--accent);background:#222839;}
+  .opt:active{transform:translateY(1px);}
+  .opt .tag{font-family:var(--mono);color:var(--muted);font-size:12px;margin-right:10px;}
+  .backlink{margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted);
+    background:none;border:none;cursor:pointer;padding:0;}
+  .backlink:hover{color:var(--text);}
+
+  /* photo module */
+  .optflag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--aqua);border:1px solid #1f5066;background:#10283a;border-radius:999px;padding:4px 11px;margin:0 0 12px;}
+  .privacy{background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--green);
+    border-radius:10px;padding:12px 14px;margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.55;}
+  .privacy b{color:var(--text);}
+  .photointro{font-family:var(--serif);font-size:25px;margin:0 0 8px;}
+  .uploadbox{border:1px dashed var(--line);border-radius:12px;padding:22px;text-align:center;
+    background:var(--panel-2);margin:6px 0 16px;}
+  .uploadbox p{margin:8px 0 0;color:var(--muted);font-size:13px;}
+  .pcard{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;}
+  .pcard .ptop{display:flex;gap:12px;align-items:flex-start;}
+  .pcanvas-wrap{position:relative;flex:0 0 auto;}
+  canvas.pcanvas{border-radius:8px;border:1px solid var(--line);cursor:crosshair;display:block;max-width:100%;}
+  .pmeta{flex:1 1 auto;min-width:0;}
+  .pstatus{font-family:var(--mono);font-size:12px;color:var(--amber);margin:8px 0 6px;min-height:16px;}
+  .pstatus.done{color:var(--green);}
+  .psw{display:flex;gap:6px;margin-top:6px;}
+  .psw i{width:22px;height:22px;border-radius:5px;border:1px solid var(--line);display:inline-block;}
+  .psw i b{display:block;font-family:var(--mono);font-size:9px;color:var(--muted);text-align:center;margin-top:24px;}
+  .pmini{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .plabelrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .plabelrow label{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+  .plabelrow select{width:auto;padding:7px 10px;font-size:13px;}
+  .pretake{font-family:var(--mono);font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 0 0;text-decoration:underline;}
+  .pretake:hover{color:var(--accent);}
+
+  .inter .revtag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin:0 0 8px;}
+  .inter h2{font-family:var(--serif);font-size:30px;margin:6px 0 8px;}
+  .inter .big{font-family:var(--serif);font-size:44px;color:var(--accent);margin:2px 0 8px;line-height:1.04;}
+  .revswatch{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px;}
+  .revswatch i{width:46px;height:46px;border-radius:9px;border:1px solid var(--line);display:inline-block;}
+
+  .resultwrap{text-align:left;}
+  .codename{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin:0 0 4px;}
+  .themename{font-family:var(--serif);font-size:40px;margin:0 0 4px;line-height:1.05;}
+  .themesub{color:var(--muted);font-size:16px;margin:0 0 8px;font-style:italic;}
+  .headline{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+  .pill{font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:var(--panel-2);
+    border-radius:999px;padding:6px 12px;color:var(--text);}
+  .pill b{color:var(--accent);}
+  .desc{font-size:16px;line-height:1.6;margin:0 0 8px;}
+
+  .sectlabel{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:26px 0 12px;}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 8px;}
+  .sw{flex:1 1 90px;min-width:78px;border-radius:10px;overflow:hidden;border:1px solid var(--line);}
+  .sw .chip{height:54px;}
+  .sw .hex{font-family:var(--mono);font-size:11px;color:var(--muted);padding:6px 8px;background:var(--panel-2);text-align:center;}
+  .swrow-note{color:var(--muted);font-size:13px;margin:8px 0 0;font-style:italic;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 0;}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+  .card{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px 16px 18px;}
+  .card h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;}
+  .card p{margin:0;font-size:14.5px;line-height:1.55;color:var(--text);}
+  .card.avoid h3{color:var(--violet);}
+  .card.measured h3{color:var(--green);}
+  .kw{display:flex;flex-wrap:wrap;gap:7px;}
+  .kw span{font-size:13px;background:#222839;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--text);}
+
+  .flexcard{background:var(--panel-2);border:1px dashed var(--accent);border-radius:12px;padding:16px 16px 18px;margin-top:14px;}
+  .flexcard h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin:0 0 10px;}
+  .flexitem{margin:0 0 13px;font-size:14.5px;line-height:1.55;}
+  .flexitem:last-child{margin-bottom:0;}
+  .flexitem b{color:var(--accent);}
+  .miniswatch{display:inline-flex;gap:5px;vertical-align:-3px;margin-left:8px;}
+  .miniswatch i{width:16px;height:16px;border-radius:4px;border:1px solid var(--line);display:inline-block;}
+
+  .token{margin-top:26px;}
+  .token h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    margin:0 0 8px;display:flex;align-items:center;justify-content:space-between;}
+  pre.tok{ background:#0a1024;border:1px solid var(--line);border-radius:11px;
+    font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--green);padding:16px;overflow:auto;white-space:pre;margin:0;}
+  .copybtn{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:7px;padding:5px 10px;cursor:pointer;}
+  .copybtn:hover{color:var(--accent);border-color:var(--accent);}
+
+  .submit{margin-top:30px;border-top:1px solid var(--line);padding-top:26px;}
+  .submit h3{font-family:var(--serif);font-size:24px;margin:0 0 6px;}
+  .submit .shint{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 18px;}
+  .frow{margin-bottom:14px;}
+  .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:560px){.formgrid{grid-template-columns:1fr;}}
+  .sent{display:none;background:#10283a;border:1px solid #1f5066;color:var(--aqua);border-radius:10px;
+    padding:14px 16px;font-size:14.5px;line-height:1.5;margin-top:14px;}
+
+  .hidden{display:none !important;}
+  .foot{font-family:var(--mono);font-size:11px;color:#9aa3b2;text-align:center;margin-top:22px;}
+
+  @media print{
+    body{background:#fff;color:#111;padding:0;}
+    .window{box-shadow:none;border:none;}
+    .titlebar,.btnrow,.copybtn,.foot,.prompt,.submit{display:none !important;}
+    .opt,.card,pre.tok,.flexcard{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="window">
+    <div class="titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="path">closet-coder — color-analysis.exe — zsh</span>
+    </div>
+    <div class="body">
+
+      <!-- ============ START ============ -->
+      <section id="start">
+        <p class="prompt"><span class="g">closet-coder</span> ~ % run color-analysis <span class="cur"></span></p>
+        <h1 class="hero" aria-label="The Color Analysis">
+          <svg id="caSvg" class="catitle" viewBox="0 0 580 104" role="img" aria-label="The Color Analysis">
+            <title>The Color Analysis</title>
+            <defs>
+              <linearGradient id="rainbow" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ff3b3b"/><stop offset=".17" stop-color="#ff9f1c"/>
+                <stop offset=".33" stop-color="#ffe14d"/><stop offset=".5" stop-color="#3ddc84"/>
+                <stop offset=".66" stop-color="#2ec5ff"/><stop offset=".83" stop-color="#6c7bff"/>
+                <stop offset="1" stop-color="#b15cff"/>
+              </linearGradient>
+              <mask id="splashMask">
+                <rect x="0" y="0" width="580" height="104" fill="#000"/>
+                <g id="revealG" fill="#fff"></g>
+              </mask>
+            </defs>
+            <text x="2" y="80" fill="#f4f9fc">The</text>
+            <text id="caBase" x="112" y="80" fill="#f4f9fc">Color Analysis</text>
+            <text id="caRainbow" x="112" y="80" fill="url(#rainbow)" mask="url(#splashMask)">Color Analysis</text>
+            <g id="dropsG"></g>
+          </svg>
+        </h1>
+        <p class="lede">Three short modules that compile into one personalized color assessment.
+          The last one can optionally read real photos to measure how your coloring actually shifts across looks.
+          No wrong answers; go with your gut.</p>
+
+        <div class="steps">
+          <div class="step"><span class="num">1</span><div>
+            <h4>The Season</h4>
+            <p>Classic seasonal analysis — undertone, depth &amp; clarity place you in one of the 12 color seasons. The objective anchor.</p></div></div>
+          <div class="step"><span class="num">2</span><div>
+            <h4>The Preferences</h4>
+            <p>What you're drawn to, love, and avoid — regardless of theory. Your taste, in your own words.</p></div></div>
+          <div class="step"><span class="num">3</span><div>
+            <h4>The Range &amp; Variability</h4>
+            <p>Two quick questions, then — optionally — upload a few photos across different looks (natural vs. glam, light vs. dark hair). It measures how wide your real range is.</p></div></div>
+        </div>
+
+        <label class="field" for="subject">Who are we analyzing?</label>
+        <input type="text" id="subject" placeholder="e.g. Shelby, Brettany, Sam…" autocomplete="off" />
+        <div class="btnrow">
+          <button class="btn" onclick="start()">▸ Begin module 1</button>
+          <a class="btn ghost" href="index.html" style="text-decoration:none;">‹ Theme Finder</a>
+        </div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="quiz" class="hidden">
+        <p class="stagetag" id="stageTag"></p>
+        <div class="progress"><span id="progLabel">Q1 / 9</span><span id="progName"></span></div>
+        <div class="bar"><i id="barFill"></i></div>
+        <h2 class="q"><span class="n" id="qN">Question 1</span><span id="qText"></span></h2>
+        <p class="qhint" id="qHint"></p>
+        <div class="opts" id="opts"></div>
+        <button class="backlink" id="backBtn" onclick="back()">‹ back</button>
+      </section>
+
+      <!-- ============ PHOTO PANEL (module 3) ============ -->
+      <section id="photo" class="hidden">
+        <p class="stagetag">Module 3 — Range &amp; Variability <span class="mdot on"></span><span class="mdot on"></span><span class="mdot on"></span></p>
+        <span class="optflag">Optional step — you can skip it</span>
+        <h2 class="photointro">Want to measure your real range?</h2>
+        <p class="qhint"><b>This part is completely optional.</b> You already have a full result from your answers —
+          photos just make the range more precise. Upload <b>1–4 photos</b>: one measures your coloring; two or more
+          across <b>different looks</b> (no-makeup vs. full glam, light vs. dark hair) measures how far your look actually swings.
+          For each photo you'll tap three spots. Best results: natural daylight, looking at the camera.</p>
+
+        <div class="privacy">🔒 Your photos stay in your browser — they're never uploaded, never saved to disk, and are
+          <b>not</b> included when you send your results. Closing this tab erases them. Only the text summary is ever shared.</div>
+
+        <div class="uploadbox">
+          <input type="file" id="photoInput" accept="image/*" multiple style="display:none" />
+          <button class="btn" onclick="document.getElementById('photoInput').click()">⤴ Add photo(s)</button>
+          <p>JPG / PNG · up to 4 · all analysis runs locally in your browser.</p>
+        </div>
+
+        <div id="photoList"></div>
+
+        <div class="btnrow">
+          <button class="btn" id="usePhotosBtn" onclick="finishPhotos()">▸ Use these photos</button>
+          <button class="btn ghost" onclick="skipPhotos()">Skip this step — my answers are enough →</button>
+        </div>
+      </section>
+
+      <!-- ============ MODULE REVEAL ============ -->
+      <section id="inter" class="hidden inter">
+        <p class="revtag" id="revTag">module complete ✓</p>
+        <h2 id="revHead"></h2>
+        <p class="big" id="revBig">—</p>
+        <p class="lede" id="revBlurb"></p>
+        <div class="revswatch" id="revSwatch"></div>
+        <div class="btnrow"><button class="btn" id="revBtn" onclick="nextModule()">▸ Continue</button></div>
+      </section>
+
+      <!-- ============ FINAL ASSESSMENT ============ -->
+      <section id="result" class="hidden">
+        <div class="resultwrap">
+          <p class="codename" id="rCode">assessment compiled ✓</p>
+          <h2 class="themename" id="rName"></h2>
+          <p class="themesub" id="rSub"></p>
+          <div class="headline" id="rHeadline"></div>
+          <p class="desc" id="rDesc"></p>
+          <p class="desc" id="rReconcile" style="color:var(--muted);font-size:15px;"></p>
+
+          <p class="sectlabel">Core palette — your season's truest colors</p>
+          <div class="swatches" id="rSwatches"></div>
+          <p class="swrow-note" id="rNeutrals"></p>
+
+          <div class="grid2">
+            <div class="card"><h3>Best neutrals &amp; anchors</h3><p id="rAnchor"></p></div>
+            <div class="card"><h3>Metals &amp; jewelry</h3><p id="rMetals"></p></div>
+            <div class="card"><h3>Contrast dial</h3><p id="rContrast"></p></div>
+            <div class="card"><h3>Makeup direction</h3><p id="rMakeup"></p></div>
+          </div>
+
+          <div id="measuredWrap" class="hidden">
+            <p class="sectlabel">Measured from your photos</p>
+            <div class="card measured"><h3>Measured coloring</h3><p id="rMeasured"></p></div>
+            <div class="flexcard" style="border-style:solid;border-color:var(--green);">
+              <h3 style="color:var(--green)">Variability across your looks</h3>
+              <div id="rVariability"></div>
+            </div>
+          </div>
+
+          <p class="sectlabel" id="flexLabel">Your range — colors you can borrow</p>
+          <div class="flexcard">
+            <h3 id="rangeHdr">flex zone</h3>
+            <div id="rFlex"></div>
+          </div>
+
+          <div class="grid2">
+            <div class="card"><h3>Preference spotlight</h3><p id="rPref"></p></div>
+            <div class="card avoid"><h3>Wear less &amp; why</h3><p id="rAvoid"></p></div>
+          </div>
+
+          <p class="sectlabel">Overall mood</p>
+          <div class="kw" id="rKw"></div>
+
+          <div class="token">
+            <h3>Color token <button class="copybtn" onclick="copyToken()" id="copyBtn">copy</button></h3>
+            <pre class="tok" id="rToken"></pre>
+          </div>
+
+          <div class="submit">
+            <h3>Send my results to Sam</h3>
+            <p class="shint">Packages the full assessment so it can go straight into your Design Kit. Edit anything before you send.</p>
+            <div class="formgrid">
+              <div class="frow"><label class="field" for="fName">Name</label><input type="text" id="fName" autocomplete="name" /></div>
+              <div class="frow"><label class="field" for="fEmail">Email (optional)</label><input type="email" id="fEmail" autocomplete="email" placeholder="so Sam can reply" /></div>
+            </div>
+            <div class="frow"><label class="field" for="fNotes">Anything to add?</label>
+              <textarea id="fNotes" placeholder="e.g. obsessed with emerald, hate yellow, want help with work outfits…"></textarea></div>
+            <div class="frow"><label class="field" for="fPayload">Your result (auto-filled — editable)</label>
+              <textarea id="fPayload" style="min-height:180px;font-family:var(--mono);font-size:12.5px;"></textarea></div>
+            <div class="btnrow" style="margin-top:6px;">
+              <button class="btn" onclick="submitResults()" id="submitBtn">▸ Send to Sam</button>
+              <button class="btn ghost" onclick="emailResults()">✉ Open in email instead</button>
+            </div>
+            <div class="sent" id="sentMsg"></div>
+          </div>
+
+          <div class="btnrow">
+            <button class="btn ghost" onclick="window.print()">⤓ Save / print card</button>
+            <button class="btn ghost" onclick="restart()">↻ Analyze someone else</button>
+          </div>
+          <p class="foot">closet-coder // paste the color token into the subject's Design Kit (LIVE)</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== CONFIG ===================== */
+const SUBMIT_ENDPOINT = "";
+const OWNER_EMAIL     = "samantha.s.wagner7@gmail.com";
+
+/* ===================== SEASON DATA ===================== */
+const SEASONS = {
+  light_spring:{ name:"Light Spring", sub:"warm, light & gently clear", code:"light-spring", vec:{hue:1, value:-2, chroma:0.5},
+    desc:"Delicate and sunlit. Light, warm coloring that glows in fresh, low-deep tints — first-of-spring, not jewel-box.",
+    palette:["#FFE5A8","#FFC09F","#AEE6C4","#A0E7E5","#FFB3C6"], neutrals:"Warm ivory, soft camel, light warm grey, golden beige.",
+    anchor:"Skip stark black at the face — anchor with warm ivory, camel, and soft denim-blue.",
+    metals:"Light yellow gold and especially rose gold; delicate and polished.",
+    contrast:"Low base. Blend values, keep pairings tonal and bright-soft.",
+    makeup:"Peach, warm coral, soft golden-pink. A little warmth wakes you up.",
+    avoid:"Black & stark white at the face, heavy burgundy/charcoal, dusty muted tones, icy-cool shades.",
+    kw:["fresh","sunlit","light","warm-clear","delicate"], flex:["true_spring","light_summer"] },
+  true_spring:{ name:"True Spring", sub:"warm & clear", code:"true-spring", vec:{hue:2, value:-0.5, chroma:1.5},
+    desc:"Warm and vivid — the warmest clear family. Sunshine, coral, turquoise, fresh grass. Lit-from-within, never dusty.",
+    palette:["#FF6B35","#FFD23F","#06D6A0","#FFA62B","#EF476F"], neutrals:"Warm ivory, camel, golden tan, warm navy.",
+    anchor:"Warm navy and camel beat black; brown-based neutrals over grey.",
+    metals:"Bright yellow gold and warm copper — you can take shine.",
+    contrast:"Medium and warm. Bright with warm-neutral; avoid icy or smoky pairings.",
+    makeup:"Warm coral, peachy-pink, golden bronze.",
+    avoid:"Black, icy pastels, dusty/greyed tones, cool blue-reds, rose/silver metals.",
+    kw:["vivid","sunny","warm","clear","fresh"], flex:["bright_spring","light_spring"] },
+  bright_spring:{ name:"Bright Spring", sub:"clear, warm-leaning & high-energy", code:"bright-spring", vec:{hue:1, value:0, chroma:2},
+    desc:"Clarity first, warm tilt. Saturated, electric color that would overwhelm softer types looks alive on you.",
+    palette:["#F94144","#F9C74F","#43AA8B","#4D96FF","#FF8FAB"], neutrals:"Bright navy, true taupe, warm white, light warm grey.",
+    anchor:"Bright navy is your best dark; warm white over cream. Black only with bold makeup.",
+    metals:"Shiny yellow gold; clean polished silver also works.",
+    contrast:"Medium-high. Clean color on a clean neutral. Keep it saturated.",
+    makeup:"Clear warm coral, bright pink, clean berry.",
+    avoid:"Dusty/muted everything, smoky earth tones, washed pastels.",
+    kw:["bright","clear","electric","warm-clean","high-energy"], flex:["true_spring","bright_winter"] },
+  light_summer:{ name:"Light Summer", sub:"cool, light & soft", code:"light-summer", vec:{hue:-1, value:-2, chroma:-0.5},
+    desc:"Cool, airy, gentle — a soft watercolor of powder blues, soft roses, lilac. Lightness and cool softness flatter.",
+    palette:["#DCC6E0","#B8D8E3","#F4C2C2","#C9E4DE","#E0BBE4"], neutrals:"Soft cool grey, dove, light cool taupe, soft navy.",
+    anchor:"Soft navy over black; cool greys over warm beiges.",
+    metals:"Rose gold and soft cool silver; polished but light.",
+    contrast:"Low and blended. Tonal cool pairings; stark contrast washes you out.",
+    makeup:"Soft cool rose, mauve-pink, soft plum.",
+    avoid:"Black, orange/tomato, golden yellow, mustard, heavy/muddy tones.",
+    kw:["airy","cool","soft","watercolor","gentle"], flex:["true_summer","light_spring"] },
+  true_summer:{ name:"True Summer", sub:"cool & soft-medium", code:"true-summer", vec:{hue:-2, value:0, chroma:-1},
+    desc:"Cool and elegant. Blue-based and a touch soft — slate blue, raspberry, soft teal, mauve. Refined, tonal.",
+    palette:["#6C7BC9","#B05C8E","#4C9A8E","#C46A8B","#8E9AAF"], neutrals:"Cool grey, soft navy, cocoa-cool, rose-beige.",
+    anchor:"Soft navy and cool grey anchor; black is fine away from the face.",
+    metals:"Cool silver and rose gold; soft satin over mirror shine.",
+    contrast:"Low-to-medium, always cool. Keep warmth out near the neckline.",
+    makeup:"Cool rose, soft berry, plum.",
+    avoid:"Orange, warm yellow, tomato-red, camel/rust, hard black-and-white snaps.",
+    kw:["cool","refined","tonal","blue-based","soft"], flex:["soft_summer","light_summer"] },
+  soft_summer:{ name:"Soft Summer", sub:"muted, cool-neutral & medium", code:"soft-summer", vec:{hue:-0.5, value:0, chroma:-2},
+    desc:"Soft and smoky, cool lean. Gently greyed — sage, dusty mauve, slate, soft rose. Muted is exactly right.",
+    palette:["#9CAEA9","#A98DA6","#7E8BA3","#B5838D","#6D8B74"], neutrals:"Soft taupe, greyed navy, mushroom, cool stone.",
+    anchor:"Greyed navy and soft taupe; avoid stark black + pure white together.",
+    metals:"Brushed/satin silver and rose gold; matte over shiny.",
+    contrast:"Low and hazy. Close values, muted tones — 'dusty' is the goal.",
+    makeup:"Soft mauve, dusty rose, muted berry.",
+    avoid:"Pure bright colors, true black/white, hot pink, electric blue.",
+    kw:["muted","smoky","soft","cool-neutral","blended"], flex:["true_summer","soft_autumn"] },
+  soft_autumn:{ name:"Soft Autumn", sub:"muted, warm-neutral & medium", code:"soft-autumn", vec:{hue:0.5, value:0, chroma:-2},
+    desc:"Soft and golden-earthy. Muted but warm — soft gold, camel, moss, terracotta-tea. Blended and warm.",
+    palette:["#C9A66B","#B08968","#87986A","#C08552","#A3826F"], neutrals:"Soft camel, warm taupe, oatmeal, soft olive.",
+    anchor:"Camel and warm taupe anchor; brown beats black, navy stays soft.",
+    metals:"Soft/antiqued gold and warm bronze; brushed over bright.",
+    contrast:"Low and warm. Blend earthy mid-tones; keep icy shades off the face.",
+    makeup:"Soft terracotta, warm rose, peachy-bronze.",
+    avoid:"Black, icy pastels, hot/cool brights, pure jewel tones.",
+    kw:["muted","warm","earthy","soft-gold","blended"], flex:["soft_summer","true_autumn"] },
+  true_autumn:{ name:"True Autumn", sub:"warm & rich-muted", code:"true-autumn", vec:{hue:2, value:0.5, chroma:-1},
+    desc:"Warm, rich, spiced — harvest. Rust, olive, pumpkin, teal-green, golden brown. Deep warmth, luxe finish.",
+    palette:["#B5651D","#8A6D3B","#6B8E23","#A0522D","#C17817"], neutrals:"Chocolate, camel, warm olive, cream.",
+    anchor:"Brown is your black; cream over stark white.",
+    metals:"Antiqued gold, copper, bronze — warm and rich.",
+    contrast:"Medium and warm. Spice tones with warm neutrals.",
+    makeup:"Brick, terracotta, warm bronze, copper.",
+    avoid:"Black, icy pastels, cool blue-pinks, pure grey.",
+    kw:["warm","rich","spiced","earthy","luxe"], flex:["deep_autumn","soft_autumn"] },
+  deep_autumn:{ name:"Deep Autumn", sub:"deep, warm & rich", code:"deep-autumn", vec:{hue:1, value:2, chroma:-0.5},
+    desc:"Deep, warm, dramatic — dark-spiced. Chocolate, deep brick, forest, dark gold. You take depth lighter types can't.",
+    palette:["#7B3F00","#6B4226","#8B2500","#4F6228","#B8860B"], neutrals:"Espresso, deep olive, warm charcoal, cream.",
+    anchor:"Espresso and deep olive anchor; black works warmed or with rich color.",
+    metals:"Rich gold, copper, bronze; antiqued and substantial.",
+    contrast:"Medium-high but warm. Deep against warm-light.",
+    makeup:"Brick, deep terracotta, warm plum-brown, bronze.",
+    avoid:"Pastels, icy cool tones, dusty light shades.",
+    kw:["deep","warm","dramatic","rich","spiced"], flex:["true_autumn","deep_winter"] },
+  deep_winter:{ name:"Deep Winter", sub:"deep, cool & rich-clear", code:"deep-winter", vec:{hue:-1, value:2, chroma:0.5},
+    desc:"Deep, cool, intense — dark jewels. Pine, deep magenta, true navy, cool wine. Darkness and drama suit you.",
+    palette:["#1A1A2E","#6A0572","#03396C","#5C0029","#006400"], neutrals:"True black, deep navy, cool charcoal, crisp white.",
+    anchor:"True black and crisp white are yours — full high-contrast power.",
+    metals:"Cool silver, white gold, platinum; can also take gunmetal.",
+    contrast:"High and cool. Dark jewels against crisp white or black.",
+    makeup:"Deep berry, cool red, plum, bold cool shades.",
+    avoid:"Muted/dusty tones, warm earth (camel/rust/orange), pale washed pastels.",
+    kw:["deep","cool","intense","jewel","dramatic"], flex:["true_winter","deep_autumn"] },
+  true_winter:{ name:"True Winter", sub:"cool & clear", code:"true-winter", vec:{hue:-2, value:0.5, chroma:1},
+    desc:"Cool and crystalline — icy-clear and saturated. True blue, cool red, emerald, fuchsia, pure white.",
+    palette:["#0033A0","#C8102E","#00A86B","#862633","#4B0082"], neutrals:"True black, navy, cool charcoal, pure white.",
+    anchor:"Black and pure white are home; navy as the softer near-face anchor.",
+    metals:"Bright cool silver, white gold, platinum; clean and polished.",
+    contrast:"High and cool. Pure color against black or white. Crisp, never smoky.",
+    makeup:"True cool red, fuchsia, cool berry, clear pink.",
+    avoid:"Orange, gold-yellow, camel/rust, all muted/dusty tones.",
+    kw:["cool","clear","icy","saturated","crisp"], flex:["bright_winter","deep_winter"] },
+  bright_winter:{ name:"Bright Winter", sub:"clear, cool-neutral & high-contrast", code:"bright-winter", vec:{hue:-0.5, value:0, chroma:2},
+    desc:"Maximum clarity and contrast — electric, cool-clean. Hot magenta, electric blue, bright emerald, black-and-white.",
+    palette:["#E60049","#0BB4FF","#00E5A0","#E6007E","#2B2D42"], neutrals:"True black, pure white, bright navy, cool grey.",
+    anchor:"Black-and-white snap is your power move; bright navy as a softer dark.",
+    metals:"Bright silver, white gold, platinum; clean polished gold also works.",
+    contrast:"Highest. Electric color against crisp black or white.",
+    makeup:"Hot pink, clear cool red, bright berry.",
+    avoid:"Dusty/muted tones, earthy warm shades, washed pastels.",
+    kw:["bright","clear","high-contrast","electric","cool-clean"], flex:["true_winter","bright_spring"] },
+};
+
+/* ===================== MODULE 1 — SEASON ===================== */
+const M1 = [
+  { q:"Flip your wrist to the light — your veins read…", hint:"The classic undertone tell. Daylight near a window works best.",
+    opts:[ {t:"Blue or purple", d:{hue:-2}}, {t:"Green or olive", d:{hue:2}}, {t:"A mix / can't tell", d:{hue:0}} ]},
+  { q:"Silver ring beside a gold one against your skin — which lights you up?", hint:"Whichever makes your skin look clearer and more even.",
+    opts:[ {t:"Silver — gold looks heavy/yellow on me", d:{hue:-1.5}}, {t:"Gold — silver looks cold/disappears", d:{hue:1.5}},
+           {t:"Rose gold is my real winner", d:{hue:-0.3, chroma:-0.5}}, {t:"Both look great", d:{hue:0, chroma:0.3}} ]},
+  { q:"A day in real sun — your skin's move is…", hint:"Long-game undertone signal.",
+    opts:[ {t:"Pink up / burn, barely tan", d:{hue:-1, value:-0.5}}, {t:"Tan easily to golden brown", d:{hue:1, value:0.5}},
+           {t:"Burn first, then a little tan", d:{hue:0}} ]},
+  { q:"Pure bright-white tee vs. soft cream, up at your face — winner?", hint:"Watch your skin, not the fabric — which makes you glow?",
+    opts:[ {t:"Crisp bright white — cream looks dingy", d:{hue:-1, chroma:1}}, {t:"Warm cream/ivory — white is harsh", d:{hue:1, chroma:-1}},
+           {t:"Both fine, neither wows", d:{chroma:-0.3}} ]},
+  { q:"Your natural coloring, no product — how deep overall?", hint:"Hair + brows + eyes together, at their most natural.",
+    opts:[ {t:"Light — blonde/light brown, light eyes & brows", d:{value:-2}}, {t:"Deep — dark hair & eyes, strong brows", d:{value:2}},
+           {t:"Right in the middle", d:{value:0}} ]},
+  { q:"Bare-faced, the contrast between hair, skin & eyes is…", hint:"High = pieces 'pop' apart. Low = everything blends.",
+    opts:[ {t:"Low — it all blends softly", d:{value:-1, chroma:-0.5}}, {t:"Striking — dark hair, light skin, defined eyes", d:{value:1, chroma:1.5}},
+           {t:"Medium — some definition", d:{value:0}} ]},
+  { q:"Which set of colors feels more 'you'?", hint:"Pure gemstone/candy clarity vs. soft, foggy, lived-in.",
+    opts:[ {t:"Clear & saturated — gemstones, candy brights", d:{chroma:2}}, {t:"Soft & muted — dusty, foggy, earthy, hazy", d:{chroma:-2}},
+           {t:"Somewhere in between", d:{chroma:0}} ]},
+  { q:"The blush/lip that makes you look healthiest is…", hint:"The one where your whole face looks more awake.",
+    opts:[ {t:"Bright berry or clear cool red", d:{chroma:1.5, hue:-1}}, {t:"Soft peachy nude", d:{chroma:-1, hue:1}},
+           {t:"Warm brick or terracotta", d:{hue:1.5, value:1, chroma:-0.8}}, {t:"Soft cool rose", d:{hue:-1.2, chroma:-0.5}} ]},
+  { q:"A stranger says 'that color is SO you.' You're wearing…", hint:"Gut pick — the color you're complimented in most.",
+    opts:[ {t:"A jewel tone — emerald, sapphire, ruby", d:{chroma:1.5, value:1, hue:-0.5}}, {t:"A soft pastel — blush, powder blue, lilac", d:{value:-1.5, chroma:-0.5}},
+           {t:"An earthy spice — rust, olive, mustard", d:{hue:1.5, chroma:-1, value:0.5}}, {t:"A bright warm — coral, turquoise, sunny pink", d:{hue:1, chroma:1.5, value:-0.5}} ]},
+];
+
+/* ===================== MODULE 2 — PREFERENCES ===================== */
+const FAMILIES = {
+  jewel:{label:"Jewel tones", chips:["#00A86B","#0033A0","#862633","#4B0082"]},
+  pastel:{label:"Soft pastels", chips:["#F4C2C2","#B8D8E3","#E0BBE4","#C9E4DE"]},
+  earthy:{label:"Earthy spice", chips:["#B5651D","#6B8E23","#C17817","#A0522D"]},
+  brightwarm:{label:"Bright & warm", chips:["#FF6B35","#FFD23F","#06D6A0","#EF476F"]},
+  neutralmono:{label:"Neutrals & mono", chips:["#1A1A2E","#8E9AAF","#E9E4DA","#3A3631"]},
+  softcool:{label:"Soft & cool", chips:["#9CAEA9","#A98DA6","#7E8BA3","#B5838D"]},
+};
+const VIBES = {
+  minimalist:{label:"Clean minimalist", mood:["calm","tonal","intentional"]},
+  romantic:{label:"Soft romantic", mood:["feminine","tender","vintage"]},
+  maximalist:{label:"Bold maximalist", mood:["vivid","playful","fearless"]},
+  edgy:{label:"Downtown edgy", mood:["sharp","cool","rebel"]},
+  classic:{label:"Timeless classic", mood:["polished","refined","timeless"]},
+  boho:{label:"Earthy free-spirit", mood:["warm","organic","layered"]},
+};
+const M2 = [
+  { q:"In a store, your hand goes straight to…", hint:"Pure magnetism — what you're drawn to, theory aside.", key:"drawn",
+    opts:[ {t:"Jewel tones", v:"jewel"}, {t:"Soft pastels", v:"pastel"}, {t:"Earthy spice", v:"earthy"},
+           {t:"Bright & warm", v:"brightwarm"}, {t:"Neutrals & mono", v:"neutralmono"}, {t:"Soft & cool", v:"softcool"} ]},
+  { q:"Your style-icon energy is…", hint:"The overall mood you want your color to carry.", key:"vibe",
+    opts:[ {t:"Clean minimalist", v:"minimalist"}, {t:"Soft romantic", v:"romantic"}, {t:"Bold maximalist", v:"maximalist"},
+           {t:"Downtown edgy", v:"edgy"}, {t:"Timeless classic", v:"classic"}, {t:"Earthy free-spirit", v:"boho"} ]},
+  { q:"You feel most powerful and 'yourself' in…", hint:"The color you put on when you need to feel unstoppable.", key:"power",
+    opts:[ {t:"A bold statement color", v:"bold"}, {t:"A deep rich tone", v:"deep"}, {t:"A soft flattering shade", v:"soft"}, {t:"A crisp neutral", v:"neutral"} ]},
+  { q:"A color you LOVE — wear it constantly? (optional)", hint:"Type it in. The assessment confirms it or hands you the wearable version.",
+    key:"loved", input:true, placeholder:"e.g. emerald, mustard, hot pink, black… or leave blank" },
+  { q:"A color you can't stand / refuse to wear? (optional)", hint:"We'll keep it out of your palette regardless of theory.",
+    key:"disliked", input:true, placeholder:"e.g. orange, brown, yellow… or leave blank" },
+];
+
+/* ===================== MODULE 3 — RANGE (quick Qs) ===================== */
+const M3 = [
+  { q:"Your day-to-day makeup is…", hint:"Makeup is a contrast dial — it changes how bold your clothes can go.", key:"makeup",
+    opts:[ {t:"Full glam most days — defined brow, bold lip", v:"A"}, {t:"It depends — I dial it up and down", v:"dial"},
+           {t:"Natural or none — fresh and bare", v:"B"} ]},
+  { q:"Bold, saturated color RIGHT at your face (true red, emerald, black) looks…", hint:"How much pure intensity you can carry near the skin.", key:"saturation",
+    opts:[ {t:"Amazing — I can wear anything bold", v:2}, {t:"Good with the right makeup", v:1}, {t:"It tends to overwhelm me", v:0} ]},
+  { q:"Lived experience: which metals look best ON you?", hint:"Your real-world read overrides theory if they disagree.", key:"metal",
+    opts:[ {t:"Gold / warm", v:"gold"}, {t:"Silver / cool", v:"silver"}, {t:"Rose gold", v:"rose"}, {t:"Genuinely both", v:"both"} ]},
+];
+
+/* ===================== STATE ===================== */
+let subject="", module=1, idx=0;
+const axis={hue:0, value:0, chroma:0};
+let m1answers=[];
+const pref={drawn:"", vibe:"", power:"", loved:"", disliked:""};
+const rng={makeup:"dial", saturation:1, metal:"both"};
+let seasonKey=null, rangeWidth=null;
+let photos=[];            // {name,label,canvas,ctx,step,pts:{},rgb:{},metrics:{}}
+let measured=null;        // aggregate
+
+/* ===================== FLOW ===================== */
+function start(){
+  subject=(document.getElementById('subject').value.trim())||"Subject";
+  module=1; idx=0; m1answers=[]; axis.hue=axis.value=axis.chroma=0;
+  photos=[]; measured=null; seasonKey=null; rangeWidth=null;
+  document.getElementById('start').classList.add('hidden');
+  enterQuiz();
+}
+function moduleMeta(){
+  return module===1 ? {set:M1, tag:"Module 1 — The Season"}
+       : module===2 ? {set:M2, tag:"Module 2 — The Preferences"}
+       : {set:M3, tag:"Module 3 — The Range & Variability"};
+}
+function enterQuiz(){ document.getElementById('inter').classList.add('hidden');
+  document.getElementById('photo').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden'); render(); }
+function render(){
+  const {set,tag}=moduleMeta(); const Q=set[idx];
+  document.getElementById('stageTag').innerHTML=
+    `${tag} <span class="mdot ${module>=1?'on':''}"></span><span class="mdot ${module>=2?'on':''}"></span><span class="mdot ${module>=3?'on':''}"></span>`;
+  document.getElementById('progLabel').textContent=`Q${idx+1} / ${set.length}`;
+  document.getElementById('progName').textContent=subject;
+  document.getElementById('barFill').style.width=((idx)/set.length*100)+"%";
+  document.getElementById('qN').textContent=`Question ${idx+1}`;
+  document.getElementById('qText').textContent=Q.q;
+  document.getElementById('qHint').textContent=Q.hint||"";
+  document.getElementById('backBtn').style.visibility=(idx===0)?"hidden":"visible";
+  const wrap=document.getElementById('opts'); wrap.innerHTML="";
+  if(Q.input){
+    const ta=document.createElement('input'); ta.type="text"; ta.id="freeInput"; ta.placeholder=Q.placeholder||""; ta.value=pref[Q.key]||"";
+    wrap.appendChild(ta);
+    const b=document.createElement('button'); b.className="btn"; b.style.marginTop="16px";
+    b.textContent=(idx===set.length-1)?"▸ Next module":"▸ Continue";
+    b.onclick=()=>{ pref[Q.key]=document.getElementById('freeInput').value.trim(); advance(); };
+    wrap.appendChild(b); ta.addEventListener('keydown',e=>{ if(e.key==='Enter') b.click(); });
+    return;
+  }
+  const letters="ABCDEF";
+  Q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className="opt";
+    b.innerHTML=`<span class="tag">${letters[i]}</span>${o.t}`; b.onclick=()=>choose(Q,o,i); wrap.appendChild(b); });
+}
+function choose(Q,o,i){
+  if(module===1){ m1answers[idx]=o.d; for(const k in o.d) axis[k]+=o.d[k]; }
+  else if(module===2){ pref[Q.key]=o.v; }
+  else { rng[Q.key]=o.v; }
+  advance();
+}
+function advance(){
+  const {set}=moduleMeta(); idx++;
+  if(idx>=set.length){ if(module===3) enterPhoto(); else closeModule(); }
+  else render();
+}
+function back(){
+  if(idx>0){ idx--; if(module===1){ const d=m1answers[idx]||{}; for(const k in d) axis[k]-=d[k]; } render(); }
+}
+
+/* ===================== ANALYTICAL CORE ===================== */
+function resolveSeasonFrom(a){
+  const W={hue:1.3, value:1.0, chroma:1.1}; let best=null, bestD=Infinity;
+  for(const key in SEASONS){ const v=SEASONS[key].vec;
+    const d=W.hue*Math.abs(a.hue-v.hue)+W.value*Math.abs(a.value-v.value)+W.chroma*Math.abs(a.chroma-v.chroma);
+    if(d<bestD){ bestD=d; best=key; } }
+  return best;
+}
+function resolveSeason(){ return resolveSeasonFrom(axis); }
+function axisWords(){ return {
+  hue: axis.hue<-0.6?"Cool": axis.hue>0.6?"Warm":"Neutral",
+  value: axis.value<-0.6?"Light": axis.value>0.6?"Deep":"Medium",
+  chroma: axis.chroma<-0.6?"Soft/Muted": axis.chroma>0.6?"Clear/Bright":"Balanced" }; }
+
+/* ===================== PHOTO ENGINE ===================== */
+const STEP_LABELS=[
+  {key:"skin", say:"Tap your CHEEK (clear skin, no makeup line)"},
+  {key:"hair", say:"Now tap your HAIR (a mid-tone area)"},
+  {key:"eye",  say:"Now tap your EYE (the colored iris)"} ];
+
+function enterPhoto(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('inter').classList.add('hidden');
+  document.getElementById('photo').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=document.getElementById('photoInput');
+  if(inp) inp.addEventListener('change',e=>{ [...e.target.files].forEach(addPhoto); e.target.value=""; });
+});
+function addPhoto(file){
+  if(photos.length>=4) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxW=320, scale=Math.min(1, maxW/img.width);
+      const w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+      const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h; canvas.className="pcanvas";
+      const ctx=canvas.getContext('2d',{willReadFrequently:true}); ctx.drawImage(img,0,0,w,h);
+      const p={name:file.name,label:"Natural",canvas,ctx,step:0,pts:{},rgb:{},metrics:null};
+      canvas.addEventListener('click',e=>onTap(p,e));
+      photos.push(p); renderPhotoCard(p);
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function renderPhotoCard(p){
+  const list=document.getElementById('photoList');
+  const card=document.createElement('div'); card.className="pcard"; p.card=card;
+  const top=document.createElement('div'); top.className="ptop";
+  const wrap=document.createElement('div'); wrap.className="pcanvas-wrap"; wrap.appendChild(p.canvas);
+  const meta=document.createElement('div'); meta.className="pmeta";
+  const lr=document.createElement('div'); lr.className="plabelrow";
+  lr.innerHTML=`<label>Look</label>`;
+  const sel=document.createElement('select');
+  ["Natural / no makeup","Full glam","Light hair","Dark hair","Everyday","Other"].forEach(o=>{
+    const op=document.createElement('option'); op.textContent=o; sel.appendChild(op); });
+  sel.value="Natural / no makeup"; p.label=sel.value; sel.onchange=()=>p.label=sel.value;
+  lr.appendChild(sel);
+  const status=document.createElement('div'); status.className="pstatus"; p.statusEl=status;
+  const sw=document.createElement('div'); sw.className="psw"; p.swEl=sw;
+  const mini=document.createElement('div'); mini.className="pmini"; p.miniEl=mini;
+  const re=document.createElement('button'); re.className="pretake"; re.textContent="re-tap points"; re.onclick=()=>resetTaps(p);
+  meta.appendChild(lr); meta.appendChild(status); meta.appendChild(sw); meta.appendChild(mini); meta.appendChild(re);
+  top.appendChild(wrap); top.appendChild(meta); card.appendChild(top); list.appendChild(card);
+  updateStatus(p);
+}
+function resetTaps(p){ p.step=0; p.pts={}; p.rgb={}; p.metrics=null; p.swEl.innerHTML=""; p.miniEl.textContent=""; updateStatus(p);
+  // redraw to clear markers
+  const img=new Image();
+}
+function updateStatus(p){
+  if(p.step<3){ p.statusEl.className="pstatus"; p.statusEl.textContent=`▸ ${STEP_LABELS[p.step].say}`; }
+  else { p.statusEl.className="pstatus done"; p.statusEl.textContent="✓ sampled"; }
+}
+function onTap(p,e){
+  if(p.step>=3) return;
+  const rect=p.canvas.getBoundingClientRect();
+  const x=Math.round((e.clientX-rect.left)*(p.canvas.width/rect.width));
+  const y=Math.round((e.clientY-rect.top)*(p.canvas.height/rect.height));
+  const rgb=sampleRegion(p.ctx,x,y,4);
+  const key=STEP_LABELS[p.step].key; p.rgb[key]=rgb;
+  // marker
+  p.ctx.strokeStyle="#fff"; p.ctx.lineWidth=2; p.ctx.beginPath(); p.ctx.arc(x,y,6,0,Math.PI*2); p.ctx.stroke();
+  p.ctx.strokeStyle="#000"; p.ctx.beginPath(); p.ctx.arc(x,y,8,0,Math.PI*2); p.ctx.stroke();
+  // swatch
+  const i=document.createElement('i'); i.style.background=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; i.title=key; p.swEl.appendChild(i);
+  p.step++; updateStatus(p);
+  if(p.step>=3) computePhotoMetrics(p);
+}
+function sampleRegion(ctx,x,y,rad){
+  const x0=Math.max(0,x-rad), y0=Math.max(0,y-rad), w=rad*2, h=rad*2;
+  let d; try{ d=ctx.getImageData(x0,y0,w,h).data; }catch(err){ return [128,128,128]; }
+  let r=0,g=0,b=0,n=0;
+  for(let i=0;i<d.length;i+=4){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+  return [Math.round(r/n),Math.round(g/n),Math.round(b/n)];
+}
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b); let h,s,l=(mx+mn)/2;
+  if(mx===mn){ h=s=0; }
+  else{ const dd=mx-mn; s=l>0.5?dd/(2-mx-mn):dd/(mx+mn);
+    switch(mx){ case r:h=(g-b)/dd+(g<b?6:0);break; case g:h=(b-r)/dd+2;break; default:h=(r-g)/dd+4; } h*=60; }
+  return [h,s,l];
+}
+function computePhotoMetrics(p){
+  const skin=rgbToHsl(...p.rgb.skin), hair=rgbToHsl(...p.rgb.hair), eye=rgbToHsl(...p.rgb.eye);
+  // undertone = yellow(warm) vs pink(cool): 2g-r-b. >0 leans gold/warm, <0 leans pink/cool.
+  const warmth=(2*p.rgb.skin[1]-p.rgb.skin[0]-p.rgb.skin[2])/255;
+  const undertone = warmth>0.04 ? "warm" : warmth<-0.02 ? "cool" : "neutral";
+  const depthL=hair[2];
+  const depth = depthL<0.30 ? "deep" : depthL<0.55 ? "medium" : "light";
+  const contrastV=Math.abs(hair[2]-skin[2]);
+  const contrast = contrastV<0.18 ? "low" : contrastV<0.42 ? "medium" : "high";
+  let lean = (contrast==="high"||depth==="deep") ? "bold / Mode A end"
+           : (contrast==="low") ? "soft / Mode B end" : "mid-range";
+  p.metrics={undertone,warmth,depth,depthL,contrast,contrastV,lean};
+  p.miniEl.innerHTML=`undertone ~${undertone} · depth ${depth} · contrast ${contrast} → ${lean}`;
+}
+function aggregateMeasured(){
+  const done=photos.filter(p=>p.metrics);
+  if(!done.length){ measured=null; return; }
+  const warm=done.reduce((s,p)=>s+p.metrics.warmth,0)/done.length;
+  const contrasts=done.map(p=>p.metrics.contrastV);
+  const depthsL=done.map(p=>p.metrics.depthL);
+  const cMax=Math.max(...contrasts), cMin=Math.min(...contrasts), spread=cMax-cMin;
+  const undertone = warm>0.04?"warm":warm<-0.02?"cool":"neutral";
+  const lbl=v=> v<0.18?"low":v<0.42?"medium":"high";
+  const dlbl=v=> v<0.30?"deep":v<0.55?"medium":"light";
+  measured={ count:done.length, undertone, warm,
+    cMax,cMin,spread, cMaxLbl:lbl(cMax), cMinLbl:lbl(cMin),
+    depthMin:Math.min(...depthsL), depthMax:Math.max(...depthsL),
+    depthMinLbl:dlbl(Math.min(...depthsL)), depthMaxLbl:dlbl(Math.max(...depthsL)),
+    perPhoto:done.map(p=>({label:p.label, depth:p.metrics.depth, contrast:p.metrics.contrast, lean:p.metrics.lean})) };
+}
+function finishPhotos(){ aggregateMeasured(); closeModule(); }
+function skipPhotos(){ photos=[]; measured=null; closeModule(); }
+
+/* ===================== RANGE WIDTH ===================== */
+function computeRange(){
+  const qPts = (rng.makeup==="A"?2:rng.makeup==="dial"?1:0) + Number(rng.saturation); // 0..4
+  if(measured && measured.count>0){
+    const cBand = measured.cMax>=0.42?2:measured.cMax>=0.18?1:0;
+    const spreadBonus = measured.spread>0.18?1:0;
+    const total=qPts+cBand+spreadBonus; // 0..7
+    return {tier: total<=2?"Narrow":total<=5?"Moderate":"Wide", points:total, max:7,
+            neighbors: total<=2?0:total<=5?1:2, source:"measured+answers"};
+  }
+  const total=qPts; // 0..4
+  return {tier: total<=1?"Narrow":total<=3?"Moderate":"Wide", points:total, max:4,
+          neighbors: total<=1?0:total<=3?1:2, source:"answers"};
+}
+
+/* ===================== MODULE REVEALS ===================== */
+function closeModule(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('photo').classList.add('hidden');
+  const sec=document.getElementById('inter'); sec.classList.remove('hidden');
+  const sw=document.getElementById('revSwatch'); sw.innerHTML="";
+  if(module===1){
+    seasonKey=resolveSeason(); const S=SEASONS[seasonKey]; const w=axisWords();
+    document.getElementById('revTag').textContent="Module 1 complete ✓ — your season";
+    document.getElementById('revHead').textContent="You read as a…";
+    document.getElementById('revBig').textContent=S.name;
+    document.getElementById('revBlurb').innerHTML=`Undertone <b>${w.hue}</b> · Depth <b>${w.value}</b> · Clarity <b>${w.chroma}</b>. ${S.desc}`;
+    S.palette.forEach(h=>{const i=document.createElement('i');i.style.background=h;sw.appendChild(i);});
+    document.getElementById('revBtn').textContent="▸ Module 2 — Preferences";
+  } else if(module===2){
+    document.getElementById('revTag').textContent="Module 2 complete ✓ — your taste";
+    document.getElementById('revHead').textContent="What you're drawn to";
+    const fam=FAMILIES[pref.drawn], vibe=VIBES[pref.vibe];
+    document.getElementById('revBig').textContent=(vibe?vibe.label:"Your taste");
+    let lv=pref.loved?` You love <b>${escapeHtml(pref.loved)}</b>.`:"", dl=pref.disliked?` Avoiding <b>${escapeHtml(pref.disliked)}</b>.`:"";
+    document.getElementById('revBlurb').innerHTML=
+      `Magnetically drawn to <b>${fam?fam.label.toLowerCase():"your colors"}</b>.${lv}${dl} We'll weave this in — and flag anything that fights your season.`;
+    if(fam) fam.chips.forEach(h=>{const i=document.createElement('i');i.style.background=h;sw.appendChild(i);});
+    document.getElementById('revBtn').textContent="▸ Module 3 — Range";
+  } else {
+    rangeWidth=computeRange();
+    document.getElementById('revTag').textContent="Module 3 complete ✓ — your range";
+    document.getElementById('revHead').textContent="Your range is…";
+    document.getElementById('revBig').textContent=rangeWidth.tier;
+    let msg = rangeWidth.tier==="Narrow" ? "You shine brightest staying true to your season — focused and high-impact."
+            : rangeWidth.tier==="Moderate" ? "You can flex one season over with intention, especially when makeup brings contrast."
+            : "You carry a wide band — borrow boldly across neighboring seasons and treat contrast as a dial.";
+    if(measured&&measured.count>1) msg+=` Your photos show contrast swinging ${measured.cMinLbl}→${measured.cMaxLbl} across ${measured.count} looks.`;
+    document.getElementById('revBlurb').innerHTML=`<b>${rangeWidth.tier}</b> range (${rangeWidth.points}/${rangeWidth.max}). ${msg}`;
+    const S=SEASONS[seasonKey];
+    [S.palette[0],S.palette[2],S.palette[4]].forEach(h=>{const i=document.createElement('i');i.style.background=h;sw.appendChild(i);});
+    document.getElementById('revBtn').textContent="▸ Compile my assessment";
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function nextModule(){ if(module<3){ module++; idx=0; enterQuiz(); } else finish(); }
+
+/* ===================== RESULT HELPERS ===================== */
+const FAMILY_PROFILE={
+  jewel:{hue:-0.5,value:1,chroma:1.5}, pastel:{hue:-0.5,value:-1.5,chroma:-0.5},
+  earthy:{hue:1.5,value:0.5,chroma:-1}, brightwarm:{hue:1.5,value:-0.5,chroma:1.5},
+  neutralmono:{hue:0,value:0,chroma:0}, softcool:{hue:-0.8,value:0,chroma:-1.5} };
+function buildFlex(S){
+  const items=[]; const wide=rangeWidth.neighbors;
+  const cond = rng.makeup==="A" ? "wear freely — your everyday makeup already supplies the contrast"
+            : rng.makeup==="B" ? "save for fuller-makeup days, or keep below the shoulders"
+            : "dial it: bring up on full-makeup days, ease off when bare-faced";
+  if(wide===0){
+    items.push(`<p class="flexitem">Your range is <b>Narrow</b>, so the power move is staying inside your core palette above — it's where you look most striking. Add interest through texture, print, and silhouette rather than straying colors.</p>`);
+  } else {
+    S.flex.slice(0,wide).forEach(nk=>{ const N=SEASONS[nk];
+      const chips=N.palette.slice(0,4).map(h=>`<i style="background:${h}"></i>`).join("");
+      items.push(`<p class="flexitem"><b>Borrow from ${N.name}:</b> ${N.sub}.<span class="miniswatch">${chips}</span><br><span style="color:var(--muted)">How:</span> ${cond}.</p>`); });
+  }
+  if(pref.loved){
+    items.push(`<p class="flexitem"><b>Your love — "${escapeHtml(pref.loved)}":</b> reach for the version that matches your <i>${axisWords().hue.toLowerCase()} + ${axisWords().chroma.toLowerCase().split('/')[0]}</i> profile (a cooler/clearer or softer/warmer take). Away from the face almost anything goes — it's the neckline zone that follows the rules.</p>`);
+  }
+  return items.join("");
+}
+function prefSpotlight(){
+  const fam=FAMILIES[pref.drawn], vibe=VIBES[pref.vibe];
+  let txt = fam ? `You gravitate to <b>${fam.label.toLowerCase()}</b>` : "You have an open palette";
+  if(vibe) txt += ` with a <b>${vibe.label.toLowerCase()}</b> mood`; txt += ". ";
+  const fp=FAMILY_PROFILE[pref.drawn];
+  if(fp){
+    const clash=(Math.sign(fp.hue)&&Math.sign(axis.hue)&&Math.sign(fp.hue)!==Math.sign(axis.hue))
+             ||(Math.sign(fp.chroma)&&Math.sign(axis.chroma)&&Math.sign(fp.chroma)!==Math.sign(axis.chroma));
+    txt += clash ? `Heads up: this taste pulls a little against your season — wear those favorites lower on the body or in your season's version, and keep your most flattering colors near your face.`
+                 : `Good news — your taste lines up with your season, so lean in: these are exactly where you'll look best.`;
+  }
+  document.getElementById('rPref').innerHTML=txt;
+}
+function metalsLine(S){
+  const map={gold:"Gold suits you best (your read)", silver:"Silver suits you best (your read)",
+             rose:"Rose gold suits you best (your read)", both:"Both metals work on you (your read)"};
+  let line=S.metals;
+  line += rng.metal!=="both" ? ` — but you said: ${map[rng.metal]}. Trust your lived read; lead with it.` : ` ${map.both}, which gives extra freedom.`;
+  return line;
+}
+function contrastLine(S){
+  let base=S.contrast;
+  base += rng.makeup==="A" ? " Your full-glam default means you can live at the bolder end most days."
+        : rng.makeup==="B" ? " Leaning natural — keep the softer end near your face; let darks/brights live below the shoulders."
+        : " You dial makeup up and down, so let your clothes follow your face that day.";
+  if(measured&&measured.count>1) base+=` Measured: your contrast runs ${measured.cMinLbl} in your softest look to ${measured.cMaxLbl} in your boldest — dress each look to its own level.`;
+  return base;
+}
+function avoidLine(S){ let a=S.avoid; if(pref.disliked) a+=` Plus, per your wishes: no ${escapeHtml(pref.disliked)}.`; return a; }
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function renderMeasured(){
+  const wrap=document.getElementById('measuredWrap');
+  if(!measured||!measured.count){ wrap.classList.add('hidden'); return; }
+  wrap.classList.remove('hidden');
+  const agree = (measured.undertone==="cool"&&axis.hue<0)||(measured.undertone==="warm"&&axis.hue>0)||(measured.undertone==="neutral"&&Math.abs(axis.hue)<0.7);
+  document.getElementById('rMeasured').innerHTML=
+    `From ${measured.count} photo${measured.count>1?"s":""}: measured undertone reads <b>${measured.undertone}</b> `+
+    `(${agree?"agrees with":"differs from — lighting can skew this, so the questionnaire stays the anchor for"} your season's undertone). `+
+    `Depth ranges ${measured.depthMinLbl}→${measured.depthMaxLbl}; contrast ${measured.cMinLbl}→${measured.cMaxLbl}. `+
+    `<span style="color:var(--muted)">Undertone from photos is corroboration only; depth & contrast are the reliable measures.</span>`;
+  const v=document.getElementById('rVariability'); v.innerHTML="";
+  measured.perPhoto.forEach(pp=>{
+    v.innerHTML+=`<p class="flexitem"><b>${escapeHtml(pp.label)}:</b> ${pp.depth} depth · ${pp.contrast} contrast → pushes toward your <b>${pp.lean}</b>.</p>`;
+  });
+  if(measured.count>1){
+    v.innerHTML+=`<p class="flexitem" style="color:var(--muted)">Bottom line: your look swings from <b>${measured.cMinLbl}-contrast</b> to <b>${measured.cMaxLbl}-contrast</b>. Treat them as two modes — softer palette + soft navy near the face on low-contrast days; full jewel/bold + true black on high-contrast days.</p>`;
+  } else {
+    v.innerHTML+=`<p class="flexitem" style="color:var(--muted)">Add a second photo in a different look (e.g. full glam, or different hair) to measure how far your range actually swings.</p>`;
+  }
+}
+
+/* ===================== COMPILE ===================== */
+function finish(){
+  if(!seasonKey) seasonKey=resolveSeason();
+  if(!rangeWidth) rangeWidth=computeRange();
+  const S=SEASONS[seasonKey]; const w=axisWords();
+  const vibe=VIBES[pref.vibe], fam=FAMILIES[pref.drawn];
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('inter').classList.add('hidden');
+  document.getElementById('photo').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  document.getElementById('rCode').textContent=`${subject.toLowerCase()} // season:${S.code} ✓`;
+  document.getElementById('rName').textContent=S.name;
+  document.getElementById('rSub').textContent=S.sub;
+  document.getElementById('rHeadline').innerHTML=
+    `<span class="pill">Season <b>${S.name}</b></span>`+
+    `<span class="pill">Range <b>${rangeWidth.tier}</b></span>`+
+    (fam?`<span class="pill">Drawn to <b>${fam.label}</b></span>`:"")+
+    (measured&&measured.count?`<span class="pill">Photos <b>${measured.count}</b></span>`:"");
+  document.getElementById('rDesc').textContent=S.desc;
+  document.getElementById('rReconcile').innerHTML=
+    `<b>How this was compiled:</b> your season is the anchor, your <b>${rangeWidth.tier.toLowerCase()}</b> range sets how far you can roam, your preferences set which way to lean`+
+    (measured&&measured.count?`, and your photos measured how your coloring actually shifts across looks`:"")+
+    `. Where taste and season disagree, best colors stay at the face and favorites play below the shoulders.`;
+
+  const sw=document.getElementById('rSwatches'); sw.innerHTML="";
+  S.palette.forEach(hex=>{ const d=document.createElement('div'); d.className="sw";
+    d.innerHTML=`<div class="chip" style="background:${hex}"></div><div class="hex">${hex}</div>`; sw.appendChild(d); });
+  document.getElementById('rNeutrals').textContent="Best neutrals: "+S.neutrals;
+  document.getElementById('rAnchor').textContent=S.anchor;
+  document.getElementById('rMetals').textContent=metalsLine(S);
+  document.getElementById('rContrast').textContent=contrastLine(S);
+  document.getElementById('rMakeup').textContent=S.makeup;
+
+  renderMeasured();
+
+  document.getElementById('rangeHdr').textContent=`flex zone — ${rangeWidth.tier.toLowerCase()} range (${rangeWidth.points}/${rangeWidth.max})`;
+  document.getElementById('rFlex').innerHTML=buildFlex(S);
+  prefSpotlight();
+  document.getElementById('rAvoid').textContent=avoidLine(S);
+
+  const kw=document.getElementById('rKw'); kw.innerHTML="";
+  const moods=[...S.kw.slice(0,3), ...(vibe?vibe.mood.slice(0,2):[])];
+  [...new Set(moods)].forEach(x=>{const s=document.createElement('span');s.textContent=x;kw.appendChild(s);});
+
+  const token=buildToken(S,w);
+  document.getElementById('rToken').textContent=token;
+  document.getElementById('fName').value=subject==="Subject"?"":subject;
+  document.getElementById('fPayload').value=token;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function buildToken(S,w){
+  const fam=FAMILIES[pref.drawn], vibe=VIBES[pref.vibe];
+  let m = "== MODULE 3 — RANGE & VARIABILITY ==\n";
+  m += `range:        ${rangeWidth.tier} (${rangeWidth.points}/${rangeWidth.max}, ${rangeWidth.source})\n`;
+  m += `contrast:     ${rng.makeup==="A"?"runs bold (full-glam default)":rng.makeup==="B"?"runs soft (natural default)":"adjustable dial"}\n`;
+  m += `saturation:   ${["overwhelms easily","good w/ makeup","carries anything"][rng.saturation]}\n`;
+  m += `metals:       ${rng.metal} (lived)\n`;
+  m += `flex-zone:    ${rangeWidth.neighbors===0?"core only":S.flex.slice(0,rangeWidth.neighbors).map(k=>SEASONS[k].name).join(" + ")}\n`;
+  if(measured&&measured.count){
+    m += `photos:       ${measured.count} · undertone(measured) ${measured.undertone} · contrast ${measured.cMinLbl}→${measured.cMaxLbl} · depth ${measured.depthMinLbl}→${measured.depthMaxLbl}\n`;
+    measured.perPhoto.forEach(pp=>{ m += `  look "${pp.label}": ${pp.depth}/${pp.contrast} → ${pp.lean}\n`; });
+  }
+  return `COLOR ASSESSMENT
+subject:      ${subject}
+== MODULE 1 — SEASON ==
+season:       ${S.name}  (season:${S.code})
+profile:      undertone ${w.hue} / depth ${w.value} / clarity ${w.chroma}
+axes:         hue ${axis.hue.toFixed(1)}  value ${axis.value.toFixed(1)}  chroma ${axis.chroma.toFixed(1)}
+core:         ${S.palette.join("  ")}
+neutrals:     ${S.neutrals}
+== MODULE 2 — PREFERENCES ==
+drawn-to:     ${fam?fam.label:"—"}
+mood/vibe:    ${vibe?vibe.label:"—"}
+power-color:  ${pref.power||"—"}
+loves:        ${pref.loved||"—"}
+dislikes:     ${pref.disliked||"—"}
+${m}== COMPILED ==
+avoid:        ${avoidLine(S).replace(/<[^>]+>/g,"")}
+compiled:     ${new Date().toISOString().slice(0,10)}`;
+}
+function copyToken(){
+  const t=document.getElementById('rToken').textContent;
+  navigator.clipboard.writeText(t).then(()=>{ const b=document.getElementById('copyBtn'); b.textContent="copied ✓"; setTimeout(()=>b.textContent="copy",1600);
+  }).catch(()=>{ document.getElementById('copyBtn').textContent="select & copy"; });
+}
+
+/* ===================== SUBMISSION ===================== */
+function gatherSubmission(){
+  return { subject, name:document.getElementById('fName').value.trim(), email:document.getElementById('fEmail').value.trim(),
+    notes:document.getElementById('fNotes').value.trim(), result:document.getElementById('fPayload').value, submitted_at:new Date().toISOString() };
+}
+function showSent(msg){ const el=document.getElementById('sentMsg'); el.style.display="block"; el.innerHTML=msg; }
+function submitResults(){
+  const data=gatherSubmission();
+  if(!data.name){ showSent("Please add a name first so Sam knows whose results these are."); return; }
+  if(SUBMIT_ENDPOINT){
+    const btn=document.getElementById('submitBtn'); btn.textContent="sending…"; btn.disabled=true;
+    fetch(SUBMIT_ENDPOINT,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)})
+      .then(r=>{ if(r.ok) showSent("✓ Sent! Sam has your color assessment. Print a copy for yourself below."); else throw 0; })
+      .catch(()=>showSent("Couldn't reach the server. Use <b>Open in email instead</b> — it works every time."))
+      .finally(()=>{ btn.textContent="▸ Send to Sam"; btn.disabled=false; });
+  } else { navigator.clipboard && navigator.clipboard.writeText(data.result); emailResults();
+    showSent("Opening your email app with everything filled in — just hit send. (Result also copied to your clipboard as backup.)"); }
+}
+function emailResults(){
+  const data=gatherSubmission();
+  const subj=`Color Assessment — ${data.name||data.subject||"new submission"}`;
+  const body=`Name: ${data.name||"—"}\nEmail: ${data.email||"—"}\nNotes: ${data.notes||"—"}\n\n${data.result}`;
+  window.location.href=`mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+function restart(){
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+  document.getElementById('subject').value="";
+  document.getElementById('barFill').style.width="0%";
+  document.getElementById('sentMsg').style.display="none";
+  document.getElementById('photoList').innerHTML="";
+  seasonKey=null; rangeWidth=null; module=1; photos=[]; measured=null;
+}
+document.getElementById('subject').addEventListener('keydown',e=>{ if(e.key==='Enter') start(); });
+
+/* ===================== RAINBOW PAINT-SPLASH TITLE ===================== */
+const SVGNS="http://www.w3.org/2000/svg";
+function caDrop(cx, bb, reveal, drops, color){
+  const d=document.createElementNS(SVGNS,"circle");
+  d.setAttribute("cx",cx); d.setAttribute("cy",6); d.setAttribute("r",5.5); d.setAttribute("fill",color);
+  d.style.transition="transform .5s cubic-bezier(.55,.05,.9,.45), opacity .2s ease";
+  drops.appendChild(d);
+  const landY=bb.y+2;                         // fall from top onto the letters
+  requestAnimationFrame(()=>{ d.setAttribute("r",4.2); d.style.transform=`translateY(${landY}px)`; });
+  setTimeout(()=>{
+    // permanent reveal blob — paints the rainbow through the word here
+    const e=document.createElementNS(SVGNS,"ellipse");
+    const cyc=bb.y+bb.height*0.52;
+    e.setAttribute("cx",cx); e.setAttribute("cy",cyc); e.setAttribute("rx",0); e.setAttribute("ry",0);
+    const rxT=(bb.width/13)*1.35, ryT=bb.height*0.72;
+    const ax=document.createElementNS(SVGNS,"animate");
+    ax.setAttribute("attributeName","rx"); ax.setAttribute("from",0); ax.setAttribute("to",rxT);
+    ax.setAttribute("dur","0.4s"); ax.setAttribute("fill","freeze"); ax.setAttribute("calcMode","spline");
+    ax.setAttribute("keySplines",".2 .8 .3 1"); ax.setAttribute("keyTimes","0;1");
+    const ay=document.createElementNS(SVGNS,"animate");
+    ay.setAttribute("attributeName","ry"); ay.setAttribute("from",0); ay.setAttribute("to",ryT);
+    ay.setAttribute("dur","0.4s"); ay.setAttribute("fill","freeze"); ay.setAttribute("calcMode","spline");
+    ay.setAttribute("keySplines",".2 .8 .3 1"); ay.setAttribute("keyTimes","0;1");
+    e.appendChild(ax); e.appendChild(ay); reveal.appendChild(e);
+    // colored splat that bursts and fades
+    const s=document.createElementNS(SVGNS,"circle");
+    s.setAttribute("cx",cx); s.setAttribute("cy",cyc); s.setAttribute("r",4); s.setAttribute("fill",color);
+    s.style.transition="all .5s ease"; drops.appendChild(s);
+    requestAnimationFrame(()=>{ s.setAttribute("r",18); s.style.opacity="0"; });
+    // a few flung droplets
+    for(let k=0;k<3;k++){
+      const o=document.createElementNS(SVGNS,"circle");
+      o.setAttribute("cx",cx); o.setAttribute("cy",cyc); o.setAttribute("r",2.4); o.setAttribute("fill",color);
+      o.style.transition="all .55s ease"; drops.appendChild(o);
+      const dx=(Math.random()*2-1)*22, dy=-(8+Math.random()*16);
+      requestAnimationFrame(()=>{ o.style.transform=`translate(${dx}px,${dy}px)`; o.style.opacity="0"; });
+      setTimeout(()=>o.remove(),560);
+    }
+    setTimeout(()=>s.remove(),520);
+    d.style.opacity="0"; setTimeout(()=>d.remove(),220);
+  },500);
+}
+function runTitleFX(){
+  clearTimeout(window._caLoop);
+  const rt=document.getElementById('caRainbow'); if(!rt) return;
+  const startEl=document.getElementById('start');
+  const visible=startEl && !startEl.classList.contains('hidden');
+  let bb; try{ bb=rt.getBBox(); }catch(e){ bb=null; }
+  if(!visible || !bb || !bb.width){ window._caLoop=setTimeout(runTitleFX,600); return; }  // pause off-screen
+  const reveal=document.getElementById('revealG'), drops=document.getElementById('dropsG');
+  reveal.innerHTML=""; drops.innerHTML="";
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const r=document.createElementNS(SVGNS,"rect");
+    r.setAttribute("x",bb.x-8); r.setAttribute("y",bb.y-8); r.setAttribute("width",bb.width+16); r.setAttribute("height",bb.height+16);
+    reveal.appendChild(r); return;
+  }
+  const N=13, pal=["#ff3b3b","#ff7a1c","#ffd23f","#3ddc84","#2ec5ff","#6c7bff","#b15cff"];
+  for(let i=0;i<N;i++){
+    const cx=bb.x+(i+0.5)*bb.width/N;
+    setTimeout(()=>caDrop(cx,bb,reveal,drops,pal[i%pal.length]), 300+i*150);
+  }
+  clearTimeout(window._caLoop);
+  window._caLoop=setTimeout(runTitleFX, 300+N*150+7000);   // loop as a living effect
+}
+(function initTitleFX(){
+  const go=()=>setTimeout(runTitleFX,160);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(go); else window.addEventListener('load',go);
+})();
+</script>
+</body>
+</html>
